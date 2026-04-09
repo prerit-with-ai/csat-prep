@@ -5,6 +5,167 @@ import { useRouter } from "next/navigation";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 // ============================================
+// Topic Info Editor
+// ============================================
+
+interface TopicInfoEditorProps {
+  topic: {
+    id: string;
+    name: string;
+    slug: string;
+    section: string;
+    status: string;
+    displayOrder: number;
+  };
+}
+
+export function TopicInfoEditor({ topic }: TopicInfoEditorProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState({
+    name: topic.name,
+    section: topic.section,
+    status: topic.status,
+    displayOrder: topic.displayOrder,
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/admin/topics/${topic.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || "Failed to save");
+      }
+      setIsEditing(false);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const inputStyle = {
+    borderColor: "var(--border-default)",
+    backgroundColor: "var(--bg-primary)",
+    color: "var(--text-primary)",
+  };
+
+  if (!isEditing) {
+    return (
+      <div>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Name</p>
+            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{topic.name}</p>
+          </div>
+          <div>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Section</p>
+            <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{topic.section.toUpperCase()}</p>
+          </div>
+          <div>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Status</p>
+            <p className="text-sm font-medium" style={{ color: topic.status === "published" ? "var(--color-correct)" : "var(--color-amber)" }}>
+              {topic.status === "published" ? "Published" : "Draft"}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>Slug</p>
+            <p className="text-sm font-mono" style={{ color: "var(--text-tertiary)" }}>{topic.slug}</p>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="px-4 py-2 rounded-lg text-sm font-medium"
+          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
+        >
+          Edit
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Name</label>
+          <input
+            type="text"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none"
+            style={inputStyle}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Section</label>
+          <select
+            value={form.section}
+            onChange={(e) => setForm({ ...form, section: e.target.value })}
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none"
+            style={inputStyle}
+          >
+            <option value="rc">RC</option>
+            <option value="lr">LR</option>
+            <option value="math">Math</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Status</label>
+          <select
+            value={form.status}
+            onChange={(e) => setForm({ ...form, status: e.target.value })}
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none"
+            style={inputStyle}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>Display Order</label>
+          <input
+            type="number"
+            value={form.displayOrder}
+            onChange={(e) => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })}
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none"
+            style={inputStyle}
+          />
+        </div>
+      </div>
+      {error && <p className="text-sm" style={{ color: "var(--color-wrong)" }}>{error}</p>}
+      <div className="flex gap-2">
+        <button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="px-4 py-2 rounded-lg text-sm font-medium"
+          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)", opacity: isSaving ? 0.5 : 1 }}
+        >
+          {isSaving ? "Saving..." : "Save"}
+        </button>
+        <button
+          onClick={() => { setIsEditing(false); setForm({ name: topic.name, section: topic.section, status: topic.status, displayOrder: topic.displayOrder }); setError(""); }}
+          disabled={isSaving}
+          className="px-3 py-1.5 rounded-lg text-sm"
+          style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
 // Cheatsheet Editor
 // ============================================
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTopicById, getPatternTypesByTopicId, getResourcesByTopicId } from "@/lib/db-queries";
-import { CheatsheetEditor, PatternManager, ResourceManager } from "./TopicDetailClient";
+import { TopicInfoEditor, CheatsheetEditor, PatternManager, ResourceManager } from "./TopicDetailClient";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -73,34 +73,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
         >
           Topic Information
         </h2>
-        <div className="space-y-3">
-          <div>
-            <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              ID:
-            </span>
-            <p className="text-sm font-mono mt-1" style={{ color: "var(--text-primary)" }}>
-              {topic.id}
-            </p>
-          </div>
-          <div>
-            <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              Slug:
-            </span>
-            <p className="text-sm font-mono mt-1" style={{ color: "var(--text-primary)" }}>
-              {topic.slug}
-            </p>
-          </div>
-          {topic.dependencyIds && topic.dependencyIds.length > 0 && (
-            <div>
-              <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                Dependencies:
-              </span>
-              <p className="text-sm mt-1" style={{ color: "var(--text-primary)" }}>
-                {topic.dependencyIds.join(", ")}
-              </p>
-            </div>
-          )}
-        </div>
+        <TopicInfoEditor topic={{ id: topic.id, name: topic.name, slug: topic.slug, section: topic.section, status: topic.status, displayOrder: topic.displayOrder }} />
       </div>
 
       {/* Cheatsheet Section */}
