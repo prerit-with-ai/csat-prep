@@ -16,7 +16,8 @@ export async function middleware(request: NextRequest) {
     (pathname.startsWith("/dashboard") ||
       pathname.startsWith("/admin") ||
       pathname.startsWith("/topics") ||
-      pathname.startsWith("/daily"))
+      pathname.startsWith("/daily") ||
+      pathname.startsWith("/mock"))
   ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -25,5 +26,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/topics/:path*", "/daily/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/topics/:path*", "/daily/:path*", "/mock/:path*", "/login", "/register"],
 };

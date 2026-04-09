@@ -208,6 +208,39 @@ export const dailyDoseAnswers = pgTable("daily_dose_answers", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const mockTests = pgTable("mock_tests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  type: text("type").notNull(), // 'topic' | 'section' | 'full'
+  topicId: uuid("topic_id").references(() => topics.id),
+  section: text("section"), // 'rc' | 'lr' | 'math' for section mocks
+  totalQuestions: integer("total_questions").notNull(),
+  durationSeconds: integer("duration_seconds").notNull(),
+  status: text("status").notNull().default("in_progress"), // 'in_progress' | 'completed'
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  submittedAt: timestamp("submitted_at"),
+  netScore: text("net_score"), // decimal string e.g. "73.50"
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const mockTestResponses = pgTable("mock_test_responses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  mockTestId: uuid("mock_test_id")
+    .notNull()
+    .references(() => mockTests.id, { onDelete: "cascade" }),
+  questionId: uuid("question_id")
+    .notNull()
+    .references(() => questions.id),
+  displayOrder: integer("display_order").notNull(),
+  selectedOption: text("selected_option"), // null = skipped
+  abcTag: text("abc_tag"), // 'A' | 'B' | 'C' — set when student tags
+  isCorrect: boolean("is_correct"), // computed at submit time
+  timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  reviewedInSecondPass: boolean("reviewed_in_second_pass").notNull().default(false),
+});
+
 export const formulaCards = pgTable("formula_cards", {
   id: uuid("id").primaryKey().defaultRandom(),
   topicId: uuid("topic_id")
