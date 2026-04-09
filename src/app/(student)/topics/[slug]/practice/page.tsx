@@ -278,8 +278,8 @@ export default function PracticePage() {
     { key: 'D', text: currentQuestion.optionD },
   ];
 
-  const correctOption = isSolution ? state.currentSolution?.correctOption : null;
-  const userAnswer = isSolution ? state.answers[state.answers.length - 1]?.selectedOption : null;
+  const correctOption = isSolution ? state.currentSolution?.correctOption?.toUpperCase() : null;
+  const userAnswer = isSolution ? state.answers[state.answers.length - 1]?.selectedOption?.toUpperCase() : null;
 
   const getOptionStyle = (optionKey: string) => {
     if (!isSolution) {
