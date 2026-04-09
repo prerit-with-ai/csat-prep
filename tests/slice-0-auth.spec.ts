@@ -12,6 +12,8 @@ const TEST_ADMIN = {
 };
 
 test.describe("Slice 0: Auth & Foundation", () => {
+  // Auth tests must run without pre-existing session state
+  test.use({ storageState: { cookies: [], origins: [] } });
   test("health endpoint returns ok", async ({ request }) => {
     const response = await request.get("/api/health");
     expect(response.ok()).toBeTruthy();

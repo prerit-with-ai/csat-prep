@@ -1,0 +1,701 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+interface Topic {
+  id: string;
+  name: string;
+  section: string;
+}
+
+interface PatternType {
+  id: string;
+  name: string;
+  topicId: string;
+}
+
+export default function NewQuestionPage() {
+  const router = useRouter();
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [patternTypes, setPatternTypes] = useState<PatternType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showOptionExplanations, setShowOptionExplanations] = useState(false);
+
+  const [formData, setFormData] = useState({
+    topicId: "",
+    patternTypeId: "",
+    subtopic: "",
+    difficulty: "l1" as "l1" | "l2" | "l3",
+    questionText: "",
+    optionA: "",
+    optionB: "",
+    optionC: "",
+    optionD: "",
+    correctOption: "a" as "a" | "b" | "c" | "d",
+    smartSolution: "",
+    detailedSolution: "",
+    optionAExplanation: "",
+    optionBExplanation: "",
+    optionCExplanation: "",
+    optionDExplanation: "",
+    sourceType: "custom" as "custom" | "pyq" | "cat" | "ai",
+    sourceYear: undefined as number | undefined,
+    language: "en" as "en" | "hi",
+  });
+
+  useEffect(() => {
+    fetchTopics();
+  }, []);
+
+  useEffect(() => {
+    if (formData.topicId) {
+      fetchPatternTypes(formData.topicId);
+    } else {
+      setPatternTypes([]);
+    }
+  }, [formData.topicId]);
+
+  const fetchTopics = async () => {
+    try {
+      const res = await fetch("/api/admin/topics");
+      if (!res.ok) throw new Error("Failed to fetch topics");
+      const data = await res.json();
+      setTopics(data.topics || []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load topics");
+    }
+  };
+
+  const fetchPatternTypes = async (topicId: string) => {
+    try {
+      const res = await fetch(`/api/admin/topics?topicId=${topicId}`);
+      if (!res.ok) throw new Error("Failed to fetch pattern types");
+      const data = await res.json();
+      // The GET /api/admin/topics doesn't return pattern types, so we'll fetch from patterns API
+      const patternsRes = await fetch(`/api/admin/patterns?topicId=${topicId}`);
+      if (patternsRes.ok) {
+        const patternsData = await patternsRes.json();
+        setPatternTypes(patternsData.patterns || []);
+      }
+    } catch (err) {
+      console.error(err);
+      // Pattern types are optional, so we don't show an error
+      setPatternTypes([]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const payload = {
+        ...formData,
+        patternTypeId: formData.patternTypeId || undefined,
+        subtopic: formData.subtopic || undefined,
+        detailedSolution: formData.detailedSolution || undefined,
+        optionAExplanation: formData.optionAExplanation || undefined,
+        optionBExplanation: formData.optionBExplanation || undefined,
+        optionCExplanation: formData.optionCExplanation || undefined,
+        optionDExplanation: formData.optionDExplanation || undefined,
+        sourceYear: formData.sourceYear || undefined,
+      };
+
+      const res = await fetch("/api/admin/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error?.message || "Failed to create question");
+      }
+
+      router.push("/admin/questions");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl">
+      <div className="mb-6">
+        <Link
+          href="/admin/questions"
+          className="text-sm font-medium"
+          style={{ color: "var(--text-secondary)" }}
+        >
+          ← Back to Questions
+        </Link>
+      </div>
+
+      <h1 className="text-page-title mb-6" style={{ color: "var(--text-primary)" }}>
+        New Question
+      </h1>
+
+      {error && (
+        <div
+          className="rounded-lg p-4 mb-6"
+          style={{
+            backgroundColor: "var(--status-wrong)",
+            border: "1px solid var(--status-wrong)",
+          }}
+        >
+          <p className="text-sm" style={{ color: "var(--bg-primary)" }}>
+            {error}
+          </p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div
+          className="rounded-xl p-5 mb-6"
+          style={{
+            backgroundColor: "var(--bg-primary)",
+            border: "1px solid var(--border-default)",
+          }}
+        >
+          <h2
+            className="text-section-header mb-4"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Basic Info
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Topic *
+              </label>
+              <select
+                required
+                value={formData.topicId}
+                onChange={(e) =>
+                  setFormData({ ...formData, topicId: e.target.value, patternTypeId: "" })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <option value="">Select a topic</option>
+                {topics.map((topic) => (
+                  <option key={topic.id} value={topic.id}>
+                    {topic.name} ({topic.section.toUpperCase()})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Pattern Type
+              </label>
+              <select
+                value={formData.patternTypeId}
+                onChange={(e) =>
+                  setFormData({ ...formData, patternTypeId: e.target.value })
+                }
+                disabled={!formData.topicId || patternTypes.length === 0}
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none disabled:opacity-50"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <option value="">None</option>
+                {patternTypes.map((pattern) => (
+                  <option key={pattern.id} value={pattern.id}>
+                    {pattern.name}
+                  </option>
+                ))}
+              </select>
+              {formData.topicId && patternTypes.length === 0 && (
+                <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+                  No pattern types available for this topic
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Subtopic
+              </label>
+              <input
+                type="text"
+                value={formData.subtopic}
+                onChange={(e) =>
+                  setFormData({ ...formData, subtopic: e.target.value })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                style={{ borderColor: "var(--border-default)" }}
+                placeholder="e.g., Compound Interest"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Difficulty *
+                </label>
+                <select
+                  required
+                  value={formData.difficulty}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      difficulty: e.target.value as "l1" | "l2" | "l3",
+                    })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                >
+                  <option value="l1">L1 - Foundation</option>
+                  <option value="l2">L2 - Intermediate</option>
+                  <option value="l3">L3 - UPSC</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Language *
+                </label>
+                <select
+                  required
+                  value={formData.language}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      language: e.target.value as "en" | "hi",
+                    })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                >
+                  <option value="en">English</option>
+                  <option value="hi">Hindi</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="rounded-xl p-5 mb-6"
+          style={{
+            backgroundColor: "var(--bg-primary)",
+            border: "1px solid var(--border-default)",
+          }}
+        >
+          <h2
+            className="text-section-header mb-4"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Question
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Question Text *
+              </label>
+              <textarea
+                required
+                value={formData.questionText}
+                onChange={(e) =>
+                  setFormData({ ...formData, questionText: e.target.value })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none min-h-[120px]"
+                style={{ borderColor: "var(--border-default)" }}
+                placeholder="Enter the question text (supports markdown)"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option A *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.optionA}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionA: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option B *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.optionB}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionB: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option C *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.optionC}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionC: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option D *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.optionD}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionD: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Correct Option *
+              </label>
+              <div className="flex gap-4">
+                {(["a", "b", "c", "d"] as const).map((option) => (
+                  <label key={option} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="correctOption"
+                      value={option}
+                      checked={formData.correctOption === option}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          correctOption: e.target.value as "a" | "b" | "c" | "d",
+                        })
+                      }
+                      className="cursor-pointer"
+                    />
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      Option {option.toUpperCase()}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="rounded-xl p-5 mb-6"
+          style={{
+            backgroundColor: "var(--bg-primary)",
+            border: "1px solid var(--border-default)",
+          }}
+        >
+          <h2
+            className="text-section-header mb-4"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Solutions
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Smart Solution (shortcut approach) *
+              </label>
+              <textarea
+                required
+                value={formData.smartSolution}
+                onChange={(e) =>
+                  setFormData({ ...formData, smartSolution: e.target.value })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none min-h-[100px]"
+                style={{ borderColor: "var(--border-default)" }}
+                placeholder="The intuitive, quick approach to solve this question"
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Detailed Solution
+              </label>
+              <textarea
+                value={formData.detailedSolution}
+                onChange={(e) =>
+                  setFormData({ ...formData, detailedSolution: e.target.value })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none min-h-[100px]"
+                style={{ borderColor: "var(--border-default)" }}
+                placeholder="Step-by-step formula-based approach (optional)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="rounded-xl p-5 mb-6"
+          style={{
+            backgroundColor: "var(--bg-primary)",
+            border: "1px solid var(--border-default)",
+          }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2
+              className="text-section-header"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Option Explanations
+            </h2>
+            <button
+              type="button"
+              onClick={() => setShowOptionExplanations(!showOptionExplanations)}
+              className="text-sm font-medium"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              {showOptionExplanations ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {showOptionExplanations && (
+            <div className="space-y-4">
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option A Explanation
+                </label>
+                <input
+                  type="text"
+                  value={formData.optionAExplanation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionAExplanation: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                  placeholder="Why this option is correct/incorrect"
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option B Explanation
+                </label>
+                <input
+                  type="text"
+                  value={formData.optionBExplanation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionBExplanation: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                  placeholder="Why this option is correct/incorrect"
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option C Explanation
+                </label>
+                <input
+                  type="text"
+                  value={formData.optionCExplanation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionCExplanation: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                  placeholder="Why this option is correct/incorrect"
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Option D Explanation
+                </label>
+                <input
+                  type="text"
+                  value={formData.optionDExplanation}
+                  onChange={(e) =>
+                    setFormData({ ...formData, optionDExplanation: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                  style={{ borderColor: "var(--border-default)" }}
+                  placeholder="Why this option is correct/incorrect"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div
+          className="rounded-xl p-5 mb-6"
+          style={{
+            backgroundColor: "var(--bg-primary)",
+            border: "1px solid var(--border-default)",
+          }}
+        >
+          <h2
+            className="text-section-header mb-4"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Source
+          </h2>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Source Type *
+              </label>
+              <select
+                required
+                value={formData.sourceType}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    sourceType: e.target.value as "custom" | "pyq" | "cat" | "ai",
+                  })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <option value="custom">Custom</option>
+                <option value="pyq">PYQ (Previous Year)</option>
+                <option value="cat">CAT</option>
+                <option value="ai">AI Generated</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Source Year
+              </label>
+              <input
+                type="number"
+                value={formData.sourceYear || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    sourceYear: e.target.value ? parseInt(e.target.value) : undefined,
+                  })
+                }
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
+                style={{ borderColor: "var(--border-default)" }}
+                placeholder="e.g., 2023"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-6 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+            style={{
+              backgroundColor: "var(--text-primary)",
+              color: "var(--bg-primary)",
+            }}
+          >
+            {loading ? "Creating..." : "Create Question"}
+          </button>
+
+          <Link
+            href="/admin/questions"
+            className="px-6 py-2 rounded-lg text-sm font-medium border"
+            style={{
+              borderColor: "var(--border-default)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            Cancel
+          </Link>
+        </div>
+      </form>
+    </div>
+  );
+}
