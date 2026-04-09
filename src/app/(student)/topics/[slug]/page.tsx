@@ -337,6 +337,19 @@ export default async function TopicDetailPage({
           initialNeedsHelp={userProgress?.needsHelp ?? false}
           hasProgress={!!userProgress}
         />
+
+        <div className="mt-4">
+          <Link
+            href={`/topics/${slug}/practice`}
+            className="inline-block px-5 py-2.5 rounded-lg text-body font-medium"
+            style={{
+              backgroundColor: "var(--text-primary)",
+              color: "var(--bg-primary)",
+            }}
+          >
+            Start Practice →
+          </Link>
+        </div>
       </div>
     </div>
   );

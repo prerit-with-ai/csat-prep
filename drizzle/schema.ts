@@ -5,6 +5,7 @@ import {
   boolean,
   integer,
   uuid,
+  unique,
 } from "drizzle-orm/pg-core";
 
 // ============================================
@@ -154,6 +155,27 @@ export const topicProgress = pgTable("topic_progress", {
   needsHelp: boolean("needs_help").notNull().default(false),
   adminNotes: text("admin_notes"),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+  unique("topic_progress_user_topic_unique").on(table.userId, table.topicId),
+]);
+
+export const attempts = pgTable("attempts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  questionId: uuid("question_id")
+    .notNull()
+    .references(() => questions.id),
+  topicId: uuid("topic_id")
+    .notNull()
+    .references(() => topics.id),
+  patternTypeId: uuid("pattern_type_id").references(() => patternTypes.id),
+  selectedOption: text("selected_option"), // 'a' | 'b' | 'c' | 'd' | null (skipped)
+  isCorrect: boolean("is_correct").notNull(),
+  timeSpent: integer("time_spent").notNull().default(0), // seconds
+  difficulty: text("difficulty").notNull(), // 'l1' | 'l2' | 'l3'
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const formulaCards = pgTable("formula_cards", {
