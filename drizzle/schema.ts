@@ -135,6 +135,27 @@ export const questions = pgTable("questions", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const topicProgress = pgTable("topic_progress", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  topicId: uuid("topic_id")
+    .notNull()
+    .references(() => topics.id, { onDelete: "cascade" }),
+  currentLevel: text("current_level").notNull().default("l1"), // 'l1' | 'l2' | 'l3'
+  l1Attempts: integer("l1_attempts").notNull().default(0),
+  l1Correct: integer("l1_correct").notNull().default(0),
+  l2Attempts: integer("l2_attempts").notNull().default(0),
+  l2Correct: integer("l2_correct").notNull().default(0),
+  l3Attempts: integer("l3_attempts").notNull().default(0),
+  l3Correct: integer("l3_correct").notNull().default(0),
+  status: text("status").notNull().default("red"), // 'red' | 'amber' | 'green'
+  needsHelp: boolean("needs_help").notNull().default(false),
+  adminNotes: text("admin_notes"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const formulaCards = pgTable("formula_cards", {
   id: uuid("id").primaryKey().defaultRandom(),
   topicId: uuid("topic_id")

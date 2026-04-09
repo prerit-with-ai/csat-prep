@@ -20,7 +20,7 @@ test.describe("Slice 1: Admin Seeds Content", () => {
   test("topics list shows seeded Percentage topic", async ({ page }) => {
     await page.goto("/admin/topics");
     await expect(page.getByText("Percentage")).toBeVisible();
-    await expect(page.getByText("Math")).toBeVisible();
+    await expect(page.getByText("Math").first()).toBeVisible();
   });
 
   test("admin can create a new topic", async ({ page }) => {
@@ -60,7 +60,7 @@ test.describe("Slice 1: Admin Seeds Content", () => {
     await page.goto(`/admin/topics/${percentage.id}`);
 
     await expect(page.getByText("Cheatsheet")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Edit" }).first()).toBeVisible();
   });
 
   test("admin can add a pattern type to a topic", async ({ page }) => {
