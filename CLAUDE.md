@@ -25,7 +25,7 @@ A two-sided CSAT (UPSC Civil Services Aptitude Test) preparation platform. Stude
 - **Icons:** lucide-react
 - **File storage:** Cloudflare R2 (S3-compatible)
 - **Testing:** Playwright (E2E per slice)
-- **Deployment:** Railway Pro
+- **Deployment:** Vercel (Hobby)
 
 ---
 

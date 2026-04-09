@@ -619,22 +619,22 @@ No external state library. Use:
 
 ## 10. Deployment
 
-**Railway Pro setup:**
-- Single service: Next.js app
-- Build command: `npm run build`
-- Start command: `npm start`
-- Environment variables:
+**Vercel (Hobby) setup:**
+- Connect GitHub repo → Vercel auto-detects Next.js
+- Build command: `npm run build` (auto-detected)
+- Output: `.next` (auto-detected)
+- Environment variables (set in Vercel dashboard):
   - `DATABASE_URL` — Neon connection string
   - `BETTER_AUTH_SECRET` — Auth secret
-  - `BETTER_AUTH_URL` — App URL
-  - `NEXT_PUBLIC_APP_URL` — Public URL
+  - `BETTER_AUTH_URL` — https://your-app.vercel.app
+  - `NEXT_PUBLIC_APP_URL` — https://your-app.vercel.app
+- Auto-deploys on every push to `main`
 
 **Neon setup:**
-- Production branch: `main`
-- Dev branch: `dev` (for local development with branching)
-- Connection pooling enabled
+- Single database, HTTP driver (`@neondatabase/serverless`) — works in Vercel serverless functions with no config
+- Connection pooling handled by Neon's infrastructure
 
-**Domain:** TBD — can use Railway's default subdomain initially, custom domain later.
+**Domain:** Vercel assigns `your-app.vercel.app` by default. Custom domain can be added later.
 
 ## 11. Migration Path for Future Features
 
