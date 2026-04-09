@@ -23,6 +23,16 @@ export default async function AdminDashboard() {
       href: "/admin/questions",
       description: "Add and edit questions across all topics and difficulty levels",
     },
+    {
+      title: "Analytics",
+      href: "/admin/analytics",
+      description: "Student performance overview, topic accuracy, pattern weaknesses",
+    },
+    {
+      title: "Flags",
+      href: "/admin/flags",
+      description: "Students needing help, persistent revision weaknesses",
+    },
   ];
 
   return (

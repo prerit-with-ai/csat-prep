@@ -2,8 +2,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { topics, topicProgress, revisionQueue } from "../../../../drizzle/schema";
-import { eq, asc, and, lte, inArray, sql } from "drizzle-orm";
+import { topics, topicProgress, revisionQueue, mockTests } from "../../../../drizzle/schema";
+import { eq, asc, and, lte, inArray, sql, desc } from "drizzle-orm";
 import Link from "next/link";
 import DailyDoseCard from "@/components/DailyDoseCard";
 
@@ -28,6 +28,20 @@ export default async function StudentDashboard() {
     .select()
     .from(topicProgress)
     .where(eq(topicProgress.userId, session.user.id));
+
+  // Fetch last 3 completed mock tests
+  const recentMocks = await db
+    .select()
+    .from(mockTests)
+    .where(and(eq(mockTests.userId, session.user.id), eq(mockTests.status, "completed")))
+    .orderBy(desc(mockTests.submittedAt))
+    .limit(3);
+
+  // Fetch topics needing help
+  const needsHelpTopics = await db
+    .select({ topicId: topicProgress.topicId })
+    .from(topicProgress)
+    .where(and(eq(topicProgress.userId, session.user.id), eq(topicProgress.needsHelp, true)));
 
   // Count due revision items
   const [{ count: revisionCount }] = await db
@@ -110,6 +124,79 @@ export default async function StudentDashboard() {
               {revisionCount}
             </span>
           </Link>
+        </div>
+      )}
+
+      {recentMocks.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-section mb-3" style={{ color: "var(--text-primary)" }}>
+            Recent Mocks
+          </h2>
+          <div className="space-y-2">
+            {recentMocks.map((mock) => {
+              const score = mock.netScore ? parseFloat(mock.netScore) : null;
+              const date = mock.submittedAt
+                ? new Date(mock.submittedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
+                : "—";
+              return (
+                <Link
+                  key={mock.id}
+                  href={`/mock/${mock.id}/analysis`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    border: "1px solid var(--border-default)",
+                    borderRadius: "12px",
+                    padding: "12px 16px",
+                    backgroundColor: "var(--bg-primary)",
+                  }}
+                >
+                  <div>
+                    <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                      {mock.type === "full" ? "Full Mock" : mock.type === "section" ? `${mock.section?.toUpperCase()} Section Mock` : "Topic Mock"} · {date}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--text-secondary)" }}>
+                      {mock.totalQuestions} questions
+                    </p>
+                  </div>
+                  <span
+                    className="text-sm font-semibold"
+                    style={{
+                      color:
+                        score === null ? "var(--text-tertiary)"
+                        : score >= 100 ? "var(--color-correct)"
+                        : score >= 66 ? "var(--color-amber)"
+                        : "var(--color-wrong)",
+                    }}
+                  >
+                    {score !== null ? `${score.toFixed(1)} / ${(mock.totalQuestions * 2.5).toFixed(0)}` : "—"}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {needsHelpTopics.length > 0 && (
+        <div className="mb-8">
+          <div
+            style={{
+              border: "1px solid var(--border-default)",
+              borderLeft: "3px solid var(--color-amber)",
+              borderRadius: "12px",
+              padding: "16px 20px",
+              backgroundColor: "var(--bg-primary)",
+            }}
+          >
+            <p className="font-medium" style={{ color: "var(--text-primary)", fontSize: 15 }}>
+              Topics Flagged for Help
+            </p>
+            <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>
+              {needsHelpTopics.length} topic{needsHelpTopics.length !== 1 ? "s" : ""} marked as needing review by your instructor
+            </p>
+          </div>
         </div>
       )}
 

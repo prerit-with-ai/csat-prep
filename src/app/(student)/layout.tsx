@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/LogoutButton";
+import Link from "next/link";
+import FormulaFab from "@/components/FormulaFab";
 
 export default async function StudentLayout({
   children,
@@ -35,6 +37,13 @@ export default async function StudentLayout({
           CSAT Cracker
         </span>
         <div className="flex items-center gap-4">
+          <Link
+            href="/strategy"
+            className="text-sm"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Strategy
+          </Link>
           <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>
             {session.user.name}
           </span>
@@ -44,6 +53,7 @@ export default async function StudentLayout({
       <main className="mx-auto px-4 py-8" style={{ maxWidth: "var(--max-page)" }}>
         {children}
       </main>
+      <FormulaFab />
     </div>
   );
 }
