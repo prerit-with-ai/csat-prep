@@ -3,8 +3,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { topics, topicProgress } from "../../../../drizzle/schema";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import Link from "next/link";
+import DailyDoseCard from "@/components/DailyDoseCard";
 
 export default async function StudentDashboard() {
   const session = await auth.api.getSession({
@@ -56,6 +57,10 @@ export default async function StudentDashboard() {
       >
         Welcome, {session.user.name}
       </h1>
+
+      <div className="mb-8">
+        <DailyDoseCard />
+      </div>
 
       {!hasAnyTopics && (
         <div

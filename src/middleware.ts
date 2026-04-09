@@ -11,7 +11,13 @@ export async function middleware(request: NextRequest) {
   }
 
   // Unauthenticated users trying to access protected routes → redirect to login
-  if (!sessionCookie && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"))) {
+  if (
+    !sessionCookie &&
+    (pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/topics") ||
+      pathname.startsWith("/daily"))
+  ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -19,5 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/topics/:path*", "/daily/:path*", "/login", "/register"],
 };

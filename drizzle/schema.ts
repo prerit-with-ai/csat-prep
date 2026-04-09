@@ -178,6 +178,36 @@ export const attempts = pgTable("attempts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const dailyDoses = pgTable("daily_doses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  date: text("date").notNull(), // 'YYYY-MM-DD'
+  questionIds: uuid("question_ids").array().notNull().default([]),
+  completed: boolean("completed").notNull().default(false),
+  score: integer("score"),
+  totalTimeSecs: integer("total_time_secs"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  unique("daily_doses_user_date_unique").on(table.userId, table.date),
+]);
+
+export const dailyDoseAnswers = pgTable("daily_dose_answers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dailyDoseId: uuid("daily_dose_id")
+    .notNull()
+    .references(() => dailyDoses.id, { onDelete: "cascade" }),
+  questionId: uuid("question_id")
+    .notNull()
+    .references(() => questions.id),
+  selectedOption: text("selected_option"),
+  isCorrect: boolean("is_correct").notNull(),
+  timeSpent: integer("time_spent").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const formulaCards = pgTable("formula_cards", {
   id: uuid("id").primaryKey().defaultRandom(),
   topicId: uuid("topic_id")
