@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/*
+ * Design System — CSAT Prep Tool
+ * See docs/DESIGN-SYSTEM.md for full spec
+ */
+
+:root {
+  /* Base palette — warm neutrals */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8F7F4;
+  --bg-tertiary: #F1EFE8;
+  --text-primary: #1A1A18;
+  --text-secondary: #5C5C58;
+  --text-tertiary: #8A8A84;
+  --border-default: #E4E2DA;
+  --border-subtle: #EEEDEA;
+
+  /* Status colors */
+  --color-correct: #2D8B59;
+  --color-correct-bg: #E8F5ED;
+  --color-wrong: #C53030;
+  --color-wrong-bg: #FEE8E8;
+  --color-amber: #B27D10;
+  --color-amber-bg: #FEF6E2;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+
+  /* Section identity */
+  --section-rc: #4A6FA5;
+  --section-rc-bg: #EDF2F8;
+  --section-lr: #0F766E;
+  --section-lr-bg: #E6F5F3;
+  --section-math: #92610A;
+  --section-math-bg: #FAF3E6;
+
+  /* ABC tags */
+  --abc-a: #16A34A;
+  --abc-a-bg: #DCFCE7;
+  --abc-b: #D97706;
+  --abc-b-bg: #FEF3C7;
+  --abc-c: #71717A;
+  --abc-c-bg: #F4F4F5;
+
+  /* Difficulty levels */
+  --level-l1: #22C55E;
+  --level-l1-bg: #F0FDF4;
+  --level-l2: #EAB308;
+  --level-l2-bg: #FEFCE8;
+  --level-l3: #EF4444;
+  --level-l3-bg: #FEF2F2;
+
+  /* Layout */
+  --max-content: 720px;
+  --max-page: 960px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1C1C1A;
+    --bg-secondary: #141413;
+    --bg-tertiary: #252523;
+    --text-primary: #E8E6DF;
+    --text-secondary: #A3A19A;
+    --text-tertiary: #6B6A65;
+    --border-default: #2E2E2B;
+    --border-subtle: #232321;
+
+    --color-correct: #4ADE80;
+    --color-correct-bg: #1A2E22;
+    --color-wrong: #F87171;
+    --color-wrong-bg: #2E1A1A;
+    --color-amber: #FBBF24;
+    --color-amber-bg: #2E2510;
+    --color-info: #60A5FA;
+    --color-info-bg: #1A2340;
+
+    --section-rc-bg: #1A2230;
+    --section-lr-bg: #0F2625;
+    --section-math-bg: #2A2010;
+
+    --abc-a-bg: #142E1C;
+    --abc-b-bg: #2E2510;
+    --abc-c-bg: #27272A;
+  }
+}
+
+/* Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+body {
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus */
+*:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
+}
+
+/* Input reset */
+input {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+  width: 100%;
+  transition: border-color 100ms;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--text-primary);
+}
