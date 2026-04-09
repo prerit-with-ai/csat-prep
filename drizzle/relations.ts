@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { topics, patternTypes, resources, questions, formulaCards, user } from "./schema";
+import { topics, patternTypes, resources, questions, formulaCards, user, revisionQueue, patternProgress } from "./schema";
 
 export const topicsRelations = relations(topics, ({ many }) => ({
   patternTypes: many(patternTypes),
@@ -24,4 +24,15 @@ export const questionsRelations = relations(questions, ({ one }) => ({
 
 export const formulaCardsRelations = relations(formulaCards, ({ one }) => ({
   topic: one(topics, { fields: [formulaCards.topicId], references: [topics.id] }),
+}));
+
+export const revisionQueueRelations = relations(revisionQueue, ({ one }) => ({
+  user: one(user, { fields: [revisionQueue.userId], references: [user.id] }),
+  patternType: one(patternTypes, { fields: [revisionQueue.patternTypeId], references: [patternTypes.id] }),
+  originalQuestion: one(questions, { fields: [revisionQueue.originalQuestionId], references: [questions.id] }),
+}));
+
+export const patternProgressRelations = relations(patternProgress, ({ one }) => ({
+  user: one(user, { fields: [patternProgress.userId], references: [user.id] }),
+  patternType: one(patternTypes, { fields: [patternProgress.patternTypeId], references: [patternTypes.id] }),
 }));

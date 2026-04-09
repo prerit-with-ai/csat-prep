@@ -2,8 +2,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { topics, topicProgress } from "../../../../drizzle/schema";
-import { eq, asc } from "drizzle-orm";
+import { topics, topicProgress, revisionQueue } from "../../../../drizzle/schema";
+import { eq, asc, and, lte, inArray, sql } from "drizzle-orm";
 import Link from "next/link";
 import DailyDoseCard from "@/components/DailyDoseCard";
 
@@ -28,6 +28,18 @@ export default async function StudentDashboard() {
     .select()
     .from(topicProgress)
     .where(eq(topicProgress.userId, session.user.id));
+
+  // Count due revision items
+  const [{ count: revisionCount }] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(revisionQueue)
+    .where(
+      and(
+        eq(revisionQueue.userId, session.user.id),
+        inArray(revisionQueue.status, ["active", "persistent"]),
+        lte(revisionQueue.nextReviewAt, sql`now()`)
+      )
+    );
 
   // Build progress map: topicId -> progress
   const progressMap = new Map(
@@ -61,6 +73,45 @@ export default async function StudentDashboard() {
       <div className="mb-8">
         <DailyDoseCard />
       </div>
+
+      {revisionCount > 0 && (
+        <div className="mb-8">
+          <Link
+            href="/revision"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              border: "1px solid var(--border-default)",
+              borderLeft: "3px solid var(--color-amber)",
+              borderRadius: "12px",
+              padding: "16px 20px",
+              backgroundColor: "var(--bg-primary)",
+            }}
+          >
+            <div>
+              <p className="font-medium" style={{ color: "var(--text-primary)", fontSize: 15 }}>
+                Revision Due
+              </p>
+              <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>
+                {revisionCount} pattern{revisionCount !== 1 ? "s" : ""} to review
+              </p>
+            </div>
+            <span
+              style={{
+                backgroundColor: "var(--color-amber)",
+                color: "white",
+                borderRadius: "12px",
+                padding: "2px 10px",
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              {revisionCount}
+            </span>
+          </Link>
+        </div>
+      )}
 
       {!hasAnyTopics && (
         <div

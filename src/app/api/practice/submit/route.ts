@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { questions, topicProgress, attempts } from "../../../../../drizzle/schema";
+import { questions, topicProgress, attempts, revisionQueue } from "../../../../../drizzle/schema";
 import { eq, and, sql } from "drizzle-orm";
 
 const submitSchema = z.object({
@@ -125,6 +125,48 @@ export async function POST(req: NextRequest) {
       .update(topicProgress)
       .set({ currentLevel: newLevel, status: newStatus, updatedAt: new Date() })
       .where(and(eq(topicProgress.userId, userId), eq(topicProgress.topicId, topicId)));
+  }
+
+  // Trigger revision queue on wrong answer (if question has a pattern)
+  if (!isCorrect && question.patternTypeId) {
+    const existingEntry = await db.query.revisionQueue.findFirst({
+      where: and(
+        eq(revisionQueue.userId, userId),
+        eq(revisionQueue.patternTypeId, question.patternTypeId)
+      ),
+    });
+
+    if (!existingEntry) {
+      // Create new revision queue entry
+      const nextReviewAt = new Date();
+      nextReviewAt.setDate(nextReviewAt.getDate() + 1);
+
+      await db.insert(revisionQueue).values({
+        userId,
+        patternTypeId: question.patternTypeId,
+        originalQuestionId: questionId,
+        nextReviewAt,
+        reviewCount: 0,
+        wrongCount: 1,
+        status: "active",
+      });
+    } else if (existingEntry.status === "resolved") {
+      // Reactivate resolved entry
+      const nextReviewAt = new Date();
+      nextReviewAt.setDate(nextReviewAt.getDate() + 1);
+
+      await db
+        .update(revisionQueue)
+        .set({
+          status: "active",
+          reviewCount: 0,
+          wrongCount: 1,
+          nextReviewAt,
+          originalQuestionId: questionId,
+        })
+        .where(eq(revisionQueue.id, existingEntry.id));
+    }
+    // If status is 'active' or 'persistent', do nothing
   }
 
   return NextResponse.json({

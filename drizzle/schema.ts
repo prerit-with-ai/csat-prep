@@ -241,6 +241,42 @@ export const mockTestResponses = pgTable("mock_test_responses", {
   reviewedInSecondPass: boolean("reviewed_in_second_pass").notNull().default(false),
 });
 
+export const revisionQueue = pgTable("revision_queue", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  patternTypeId: uuid("pattern_type_id")
+    .notNull()
+    .references(() => patternTypes.id, { onDelete: "cascade" }),
+  originalQuestionId: uuid("original_question_id")
+    .notNull()
+    .references(() => questions.id),
+  nextReviewAt: timestamp("next_review_at").notNull(),
+  reviewCount: integer("review_count").notNull().default(0),
+  wrongCount: integer("wrong_count").notNull().default(0),
+  lastReviewedAt: timestamp("last_reviewed_at"),
+  status: text("status").notNull().default("active"), // 'active' | 'resolved' | 'persistent'
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  unique("revision_queue_user_pattern_unique").on(table.userId, table.patternTypeId),
+]);
+
+export const patternProgress = pgTable("pattern_progress", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  patternTypeId: uuid("pattern_type_id")
+    .notNull()
+    .references(() => patternTypes.id, { onDelete: "cascade" }),
+  attemptsCount: integer("attempts_count").notNull().default(0),
+  correctCount: integer("correct_count").notNull().default(0),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+  unique("pattern_progress_user_pattern_unique").on(table.userId, table.patternTypeId),
+]);
+
 export const formulaCards = pgTable("formula_cards", {
   id: uuid("id").primaryKey().defaultRandom(),
   topicId: uuid("topic_id")
