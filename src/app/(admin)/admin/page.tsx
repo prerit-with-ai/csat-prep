@@ -33,6 +33,11 @@ export default async function AdminDashboard() {
       href: "/admin/flags",
       description: "Students needing help, persistent revision weaknesses",
     },
+    {
+      title: "Bulk Import",
+      href: "/admin/import",
+      description: "Import questions from JSON — validate, preview, then confirm",
+    },
   ];
 
   return (
