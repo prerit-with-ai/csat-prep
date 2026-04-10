@@ -351,16 +351,28 @@ export default function MockAnalysisPage() {
       </div>
 
       {/* Bottom nav */}
-      <Link
-        href="/dashboard"
-        className="block w-full px-6 py-3 rounded-lg text-body text-center"
-        style={{
-          backgroundColor: 'var(--text-primary)',
-          color: 'var(--bg-primary)',
-        }}
-      >
-        Back to Dashboard
-      </Link>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Link
+          href="/mock"
+          className="flex-1 px-6 py-3 rounded-lg text-body text-center"
+          style={{
+            backgroundColor: 'var(--text-primary)',
+            color: 'var(--bg-primary)',
+          }}
+        >
+          Start Another Mock →
+        </Link>
+        <Link
+          href="/dashboard"
+          className="flex-1 px-6 py-3 rounded-lg text-body text-center"
+          style={{
+            border: '1px solid var(--border-default)',
+            color: 'var(--text-primary)',
+          }}
+        >
+          Back to Dashboard
+        </Link>
+      </div>
     </div>
   );
 }

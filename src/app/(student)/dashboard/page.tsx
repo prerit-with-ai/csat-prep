@@ -129,9 +129,14 @@ export default async function StudentDashboard() {
 
       {recentMocks.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-section mb-3" style={{ color: "var(--text-primary)" }}>
-            Recent Mocks
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-section" style={{ color: "var(--text-primary)" }}>
+              Recent Mocks
+            </h2>
+            <Link href="/mock/history" className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              View all →
+            </Link>
+          </div>
           <div className="space-y-2">
             {recentMocks.map((mock) => {
               const score = mock.netScore ? parseFloat(mock.netScore) : null;

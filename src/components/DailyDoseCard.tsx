@@ -57,7 +57,29 @@ export default function DailyDoseCard() {
   }
 
   if (!data) {
-    return null;
+    return (
+      <div
+        className="p-5 rounded-xl"
+        style={{
+          border: '1px solid var(--border-default)',
+          backgroundColor: 'var(--bg-primary)',
+        }}
+      >
+        <p className="text-base font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
+          Daily Dose
+        </p>
+        <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
+          Unable to load today&apos;s practice. Try refreshing.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="text-sm underline"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          Refresh
+        </button>
+      </div>
+    );
   }
 
   const { dose, answeredQuestionIds, streak } = data;

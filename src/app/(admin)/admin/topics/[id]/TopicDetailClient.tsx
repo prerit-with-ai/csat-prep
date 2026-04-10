@@ -504,6 +504,159 @@ export function PatternManager({ topicId, initialPatterns }: PatternManagerProps
 }
 
 // ============================================
+// Formula Card Manager
+// ============================================
+
+interface FormulaCard {
+  id: string;
+  topicId: string;
+  content: string;
+  displayOrder: number;
+}
+
+interface FormulaCardManagerProps {
+  topicId: string;
+  initialFormulas: FormulaCard[];
+}
+
+export function FormulaCardManager({ topicId, initialFormulas }: FormulaCardManagerProps) {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newContent, setNewContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleAdd = async () => {
+    if (!newContent.trim()) {
+      setError("Content is required");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/admin/formulas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topicId,
+          content: newContent.trim(),
+          displayOrder: initialFormulas.length,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error?.message || "Failed to create formula card");
+      }
+
+      setNewContent("");
+      setShowAddForm(false);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (cardId: string) => {
+    if (!confirm("Delete this formula card?")) return;
+
+    try {
+      const response = await fetch(`/api/admin/formulas/${cardId}`, { method: "DELETE" });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error?.message || "Failed to delete");
+      }
+      router.refresh();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete formula card");
+    }
+  };
+
+  return (
+    <div>
+      {initialFormulas.length === 0 && !showAddForm ? (
+        <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+          No formula cards yet. Add your first formula card below.
+        </p>
+      ) : (
+        <div className="space-y-3 mb-4">
+          {initialFormulas.map((card) => (
+            <div
+              key={card.id}
+              className="rounded-lg p-4"
+              style={{ border: "1px solid var(--border-default)", backgroundColor: "var(--bg-secondary)" }}
+            >
+              <div className="flex items-start justify-between">
+                <p className="text-sm font-mono flex-1 whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>
+                  {card.content}
+                </p>
+                <button
+                  onClick={() => handleDelete(card.id)}
+                  className="px-3 py-1.5 rounded-lg text-sm ml-4"
+                  style={{ border: "1px solid var(--border-default)", color: "var(--color-wrong)" }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showAddForm ? (
+        <div
+          className="rounded-lg p-4"
+          style={{ border: "1px solid var(--border-default)", backgroundColor: "var(--bg-secondary)" }}
+        >
+          <h3 className="text-sm font-medium mb-3" style={{ color: "var(--text-primary)" }}>
+            Add Formula Card
+          </h3>
+          <textarea
+            value={newContent}
+            onChange={(e) => setNewContent(e.target.value)}
+            rows={6}
+            className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none mb-3 font-mono"
+            style={{ borderColor: "var(--border-default)" }}
+            placeholder="Enter formula in Markdown + KaTeX format..."
+          />
+          {error && <p className="text-sm mb-3" style={{ color: "var(--color-wrong)" }}>{error}</p>}
+          <div className="flex gap-2">
+            <button
+              onClick={handleAdd}
+              disabled={isSubmitting}
+              className="px-4 py-2 rounded-lg text-sm font-medium"
+              style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)", opacity: isSubmitting ? 0.5 : 1 }}
+            >
+              {isSubmitting ? "Adding..." : "Add Card"}
+            </button>
+            <button
+              onClick={() => { setShowAddForm(false); setNewContent(""); setError(""); }}
+              disabled={isSubmitting}
+              className="px-3 py-1.5 rounded-lg text-sm"
+              style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="px-4 py-2 rounded-lg text-sm font-medium"
+          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
+        >
+          Add Formula Card
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ============================================
 // Resource Manager
 // ============================================
 

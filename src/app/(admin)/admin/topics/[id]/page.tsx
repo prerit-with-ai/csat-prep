@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTopicById, getPatternTypesByTopicId, getResourcesByTopicId } from "@/lib/db-queries";
-import { TopicInfoEditor, CheatsheetEditor, PatternManager, ResourceManager } from "./TopicDetailClient";
+import { TopicInfoEditor, CheatsheetEditor, PatternManager, ResourceManager, FormulaCardManager } from "./TopicDetailClient";
+import { db } from "@/lib/db";
+import { formulaCards } from "../../../../../../drizzle/schema";
+import { eq, asc } from "drizzle-orm";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -10,10 +13,11 @@ interface PageProps {
 export default async function TopicDetailPage({ params }: PageProps) {
   const { id } = await params;
 
-  const [topic, patternTypes, resources] = await Promise.all([
+  const [topic, patternTypes, resources, formulas] = await Promise.all([
     getTopicById(id),
     getPatternTypesByTopicId(id),
     getResourcesByTopicId(id),
+    db.select().from(formulaCards).where(eq(formulaCards.topicId, id)).orderBy(asc(formulaCards.displayOrder)),
   ]);
 
   if (!topic) {
@@ -112,7 +116,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
 
       {/* Resources Section */}
       <div
-        className="rounded-xl p-5"
+        className="rounded-xl p-5 mb-6"
         style={{
           backgroundColor: "var(--bg-primary)",
           border: "1px solid var(--border-default)",
@@ -125,6 +129,23 @@ export default async function TopicDetailPage({ params }: PageProps) {
           Resources
         </h2>
         <ResourceManager topicId={topic.id} initialResources={resources} />
+      </div>
+
+      {/* Formula Cards Section */}
+      <div
+        className="rounded-xl p-5"
+        style={{
+          backgroundColor: "var(--bg-primary)",
+          border: "1px solid var(--border-default)",
+        }}
+      >
+        <h2
+          className="text-section-header mb-4"
+          style={{ color: "var(--text-primary)" }}
+        >
+          Formula Cards
+        </h2>
+        <FormulaCardManager topicId={topic.id} initialFormulas={formulas} />
       </div>
     </div>
   );

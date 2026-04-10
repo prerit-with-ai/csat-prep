@@ -176,9 +176,9 @@ export default function DailyPracticePage() {
   const isSolution = state.phase === 'solution';
 
   const difficultyColors = {
-    l1: '#10b981',
-    l2: '#f59e0b',
-    l3: '#ef4444',
+    l1: 'var(--level-l1)',
+    l2: 'var(--level-l2)',
+    l3: 'var(--level-l3)',
   };
 
   const getDifficultyLabel = (difficulty: string) => {
@@ -219,8 +219,8 @@ export default function DailyPracticePage() {
     if (optionKey === correctOption) {
       return {
         border: '1px solid var(--color-correct)',
-        backgroundColor: 'var(--status-correct)',
-        color: 'var(--bg-primary)',
+        backgroundColor: 'var(--color-correct-bg)',
+        color: 'var(--color-correct)',
       };
     }
 
@@ -276,7 +276,7 @@ export default function DailyPracticePage() {
           <span
             className="inline-block px-2 py-1 rounded text-xs font-semibold mt-2"
             style={{
-              backgroundColor: difficultyColors[currentQuestion.difficulty.toLowerCase() as keyof typeof difficultyColors] || '#6b7280',
+              backgroundColor: difficultyColors[currentQuestion.difficulty.toLowerCase() as keyof typeof difficultyColors] || 'var(--bg-tertiary)',
               color: '#ffffff',
             }}
           >
@@ -328,8 +328,8 @@ export default function DailyPracticePage() {
           <div
             className="mb-6 p-4 rounded-xl text-center"
             style={{
-              backgroundColor: state.currentSolution.isCorrect ? 'var(--status-correct)' : '#fee2e2',
-              color: state.currentSolution.isCorrect ? 'var(--bg-primary)' : 'var(--color-wrong)',
+              backgroundColor: state.currentSolution.isCorrect ? 'var(--color-correct-bg)' : 'var(--color-wrong-bg)',
+              color: state.currentSolution.isCorrect ? 'var(--color-correct)' : 'var(--color-wrong)',
             }}
           >
             <p className="text-body font-semibold">

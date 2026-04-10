@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/LogoutButton";
 import Link from "next/link";
 import FormulaFab from "@/components/FormulaFab";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 export default async function StudentLayout({
   children,
@@ -37,13 +38,12 @@ export default async function StudentLayout({
           CSAT Cracker
         </span>
         <div className="flex items-center gap-4">
-          <Link
-            href="/strategy"
-            className="text-sm"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Strategy
-          </Link>
+          <Link href="/dashboard" className="text-sm" style={{ color: "var(--text-secondary)" }}>Dashboard</Link>
+          <Link href="/topics" className="text-sm" style={{ color: "var(--text-secondary)" }}>Topics</Link>
+          <Link href="/mock" className="text-sm" style={{ color: "var(--text-secondary)" }}>Mocks</Link>
+          <Link href="/revision" className="text-sm" style={{ color: "var(--text-secondary)" }}>Revision</Link>
+          <Link href="/strategy" className="text-sm" style={{ color: "var(--text-secondary)" }}>Strategy</Link>
+          <DarkModeToggle />
           <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>
             {session.user.name}
           </span>

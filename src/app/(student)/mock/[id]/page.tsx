@@ -151,9 +151,9 @@ export default function MockTestPage() {
   };
 
   const difficultyColors = {
-    l1: '#10b981',
-    l2: '#f59e0b',
-    l3: '#ef4444',
+    l1: 'var(--level-l1)',
+    l2: 'var(--level-l2)',
+    l3: 'var(--level-l3)',
   };
 
   if (state.phase === 'loading') {
@@ -257,6 +257,20 @@ export default function MockTestPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
+      {/* Save error banner */}
+      {state.saveError && (
+        <div
+          className="mb-4 p-3 rounded-lg text-sm"
+          style={{
+            backgroundColor: 'var(--color-amber-bg)',
+            border: '1px solid var(--color-amber)',
+            color: 'var(--color-amber)',
+          }}
+        >
+          Connection issue — some responses may not have saved. Check your network and continue.
+        </div>
+      )}
+
       {/* Header row */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -317,7 +331,7 @@ export default function MockTestPage() {
         <span
           className="inline-block px-2 py-1 rounded text-xs font-semibold"
           style={{
-            backgroundColor: difficultyColors[currentQuestion.difficulty.toLowerCase() as keyof typeof difficultyColors] || '#6b7280',
+            backgroundColor: difficultyColors[currentQuestion.difficulty.toLowerCase() as keyof typeof difficultyColors] || 'var(--bg-tertiary)',
             color: '#ffffff',
           }}
         >

@@ -73,6 +73,13 @@ const initialState: PracticeState = {
 function practiceReducer(state: PracticeState, action: PracticeAction): PracticeState {
   switch (action.type) {
     case 'LOAD_SUCCESS':
+      if (action.questions.length === 0) {
+        return {
+          ...state,
+          phase: 'error',
+          errorMessage: 'No questions available at your current level for this topic.',
+        };
+      }
       return {
         ...state,
         phase: 'answering',
@@ -169,6 +176,7 @@ export function usePracticeSession() {
 
   const submitAnswer = async (topicId: string) => {
     if (state.phase !== 'answering') return;
+    if (!state.questions[state.currentIndex]) return;
 
     dispatch({ type: 'SUBMIT_START' });
 

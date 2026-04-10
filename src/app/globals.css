@@ -82,7 +82,44 @@
     --abc-a-bg: #142E1C;
     --abc-b-bg: #2E2510;
     --abc-c-bg: #27272A;
+
+    --level-l1-bg: #0D2618;
+    --level-l2-bg: #2A2010;
+    --level-l3-bg: #2E1010;
   }
+}
+
+/* Manual dark mode toggle — applied via html.dark class */
+html.dark {
+  --bg-primary: #1C1C1A;
+  --bg-secondary: #141413;
+  --bg-tertiary: #252523;
+  --text-primary: #E8E6DF;
+  --text-secondary: #A3A19A;
+  --text-tertiary: #6B6A65;
+  --border-default: #2E2E2B;
+  --border-subtle: #232321;
+
+  --color-correct: #4ADE80;
+  --color-correct-bg: #1A2E22;
+  --color-wrong: #F87171;
+  --color-wrong-bg: #2E1A1A;
+  --color-amber: #FBBF24;
+  --color-amber-bg: #2E2510;
+  --color-info: #60A5FA;
+  --color-info-bg: #1A2340;
+
+  --section-rc-bg: #1A2230;
+  --section-lr-bg: #0F2625;
+  --section-math-bg: #2A2010;
+
+  --abc-a-bg: #142E1C;
+  --abc-b-bg: #2E2510;
+  --abc-c-bg: #27272A;
+
+  --level-l1-bg: #0D2618;
+  --level-l2-bg: #2A2010;
+  --level-l3-bg: #2E1010;
 }
 
 /* Base */

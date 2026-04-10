@@ -32,6 +32,7 @@ type MockState = {
   bQueueIndex: number;      // current index in bQueue
   durationSeconds: number;
   errorMessage: string;
+  saveError: boolean;
 };
 
 type MockAction =
@@ -44,7 +45,8 @@ type MockAction =
   | { type: 'ADVANCE_REVIEW_B' }
   | { type: 'SKIP_REVIEW' }
   | { type: 'SUBMIT_START' }
-  | { type: 'SUBMITTED' };
+  | { type: 'SUBMITTED' }
+  | { type: 'MARK_SAVE_ERROR' };
 
 const initialState: MockState = {
   phase: 'loading',
@@ -56,6 +58,7 @@ const initialState: MockState = {
   bQueueIndex: 0,
   durationSeconds: 900,
   errorMessage: '',
+  saveError: false,
 };
 
 function mockReducer(state: MockState, action: MockAction): MockState {
@@ -127,6 +130,9 @@ function mockReducer(state: MockState, action: MockAction): MockState {
     case 'SUBMITTED':
       return { ...state, phase: 'submitted' };
 
+    case 'MARK_SAVE_ERROR':
+      return { ...state, saveError: true };
+
     default:
       return state;
   }
@@ -159,7 +165,7 @@ export function useMockSession() {
     const timeSpentSeconds = getElapsedForCurrentQuestion();
     resetQuestionTimer();
 
-    // Fire-and-forget API call
+    // Fire-and-forget API call — dispatch MARK_SAVE_ERROR on failure
     fetch(`/api/mock/${state.mockId}/respond`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -169,7 +175,7 @@ export function useMockSession() {
         selectedOption: current.selectedOption,
         timeSpentSeconds,
       }),
-    }).catch(console.error);
+    }).catch(() => dispatch({ type: 'MARK_SAVE_ERROR' }));
 
     dispatch({ type: 'ADVANCE_FIRST_PASS' });
   };
@@ -198,7 +204,7 @@ export function useMockSession() {
         timeSpentSeconds,
         reviewedInSecondPass: true,
       }),
-    }).catch(console.error);
+    }).catch(() => dispatch({ type: 'MARK_SAVE_ERROR' }));
 
     dispatch({ type: 'ADVANCE_REVIEW_B' });
   };
