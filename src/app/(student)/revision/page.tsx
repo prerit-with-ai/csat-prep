@@ -199,11 +199,11 @@ export default function RevisionPage() {
   const getSectionBadgeStyle = (section: string) => {
     switch (section.toLowerCase()) {
       case 'math':
-        return { backgroundColor: 'var(--color-amber)', color: 'white' };
+        return { backgroundColor: 'var(--section-math-bg)', color: 'var(--section-math)', border: '1px solid var(--section-math)' };
       case 'lr':
-        return { backgroundColor: 'var(--color-correct)', color: 'white' };
+        return { backgroundColor: 'var(--section-lr-bg)', color: 'var(--section-lr)', border: '1px solid var(--section-lr)' };
       case 'rc':
-        return { color: 'var(--text-secondary)', border: '1px solid var(--border-default)' };
+        return { backgroundColor: 'var(--section-rc-bg)', color: 'var(--section-rc)', border: '1px solid var(--section-rc)' };
       default:
         return { color: 'var(--text-secondary)', border: '1px solid var(--border-default)' };
     }

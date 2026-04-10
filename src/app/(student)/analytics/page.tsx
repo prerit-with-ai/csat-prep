@@ -143,7 +143,7 @@ export default async function AnalyticsPage() {
 
   // ── Page ───────────────────────────────────────────────────────────────────
   return (
-    <div style={{ maxWidth: "var(--max-content)" }}>
+    <div style={{ maxWidth: "var(--max-content)", margin: "0 auto" }}>
       <div className="mb-8">
         <h1 className="text-page-title mb-1">Your Performance</h1>
         <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
@@ -154,7 +154,7 @@ export default async function AnalyticsPage() {
       {/* ── Practice activity ──────────────────────────────────────────────── */}
       <section className="mb-8">
         <h2 className="text-section mb-4">Practice Activity</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { label: "Last 7 days", value: vel.last7 },
             { label: "Last 30 days", value: vel.last30 },
@@ -380,7 +380,7 @@ export default async function AnalyticsPage() {
         ) : (
           <>
             {/* Score overview cards */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
               {[
                 { label: "Best", value: bestScore },
                 { label: "Average", value: avgScore },
@@ -500,13 +500,14 @@ export default async function AnalyticsPage() {
 
           <div
             className="rounded-xl overflow-hidden"
-            style={{ border: "1px solid var(--border-default)" }}
+            style={{ border: "1px solid var(--border-default)", overflowX: "auto" }}
           >
             {/* Table header */}
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 72px 72px 60px 60px",
+                minWidth: "340px",
                 padding: "10px 16px",
                 backgroundColor: "var(--bg-secondary)",
                 borderBottom: "1px solid var(--border-subtle)",
@@ -544,6 +545,7 @@ export default async function AnalyticsPage() {
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 72px 72px 60px 60px",
+                    minWidth: "340px",
                     padding: "11px 16px",
                     backgroundColor: "var(--bg-primary)",
                     borderBottom: isLast

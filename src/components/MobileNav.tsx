@@ -21,6 +21,10 @@ const mobileNavItems = [
 export function MobileNav() {
   const pathname = usePathname();
 
+  // Hide mobile nav during active mock session
+  const isMockSession = /^\/mock\/[^/]+$/.test(pathname);
+  if (isMockSession) return null;
+
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center"

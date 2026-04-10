@@ -206,13 +206,28 @@ export default async function TopicDetailPage({
         <div className="mb-6">
           <h2 className="text-section mb-4">Cheatsheet</h2>
           <div
-            className="rounded-xl p-5"
+            className="rounded-xl"
             style={{
-              backgroundColor: "var(--bg-primary)",
+              backgroundColor: "var(--bg-secondary)",
               border: "1px solid var(--border-default)",
+              overflow: "hidden",
             }}
           >
-            <MarkdownRenderer content={topic.cheatsheet} />
+            {/* Cheatsheet header bar */}
+            <div
+              className="px-5 py-2.5 flex items-center gap-2"
+              style={{
+                backgroundColor: `var(${sec.bg})`,
+                borderBottom: `1px solid var(${sec.accent})`,
+              }}
+            >
+              <span className="text-xs font-semibold" style={{ color: `var(${sec.accent})` }}>
+                Quick Reference
+              </span>
+            </div>
+            <div className="px-5 py-5">
+              <MarkdownRenderer content={topic.cheatsheet} />
+            </div>
           </div>
         </div>
       )}
@@ -259,12 +274,15 @@ export default async function TopicDetailPage({
             {topicResources.map((resource, idx) => {
               const badge = resourceTypeBadges[resource.type as keyof typeof resourceTypeBadges];
               return (
-                <div
+                <a
                   key={resource.id}
-                  className="flex items-start gap-3 px-5 py-4"
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover-row flex items-center gap-3 px-5 py-4"
                   style={{
-                    backgroundColor: "var(--bg-primary)",
                     borderTop: idx > 0 ? "1px solid var(--border-subtle)" : "none",
+                    textDecoration: "none",
                   }}
                 >
                   <span
@@ -273,16 +291,16 @@ export default async function TopicDetailPage({
                   >
                     {badge.label}
                   </span>
-                  <a
-                    href={resource.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm hover:underline"
+                  <span
+                    className="flex-1 text-sm"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {resource.title}
-                  </a>
-                </div>
+                  </span>
+                  <span className="text-xs shrink-0" style={{ color: "var(--text-tertiary)" }}>
+                    ↗
+                  </span>
+                </a>
               );
             })}
           </div>

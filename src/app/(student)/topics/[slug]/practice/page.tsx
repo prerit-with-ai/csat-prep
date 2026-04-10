@@ -148,7 +148,7 @@ export default function PracticePage() {
 
   if (state.phase === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="py-20 flex items-center justify-center">
         <p className="text-body" style={{ color: 'var(--text-secondary)' }}>
           Loading questions...
         </p>
@@ -158,7 +158,7 @@ export default function PracticePage() {
 
   if (state.phase === 'error') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="py-20 flex flex-col items-center justify-center gap-4">
         <p className="text-body" style={{ color: 'var(--color-wrong)' }}>
           Error: {state.errorMessage}
         </p>

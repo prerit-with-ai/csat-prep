@@ -21,6 +21,10 @@ const navItems = [
 export function NavLinks() {
   const pathname = usePathname();
 
+  // Hide nav tabs during active mock session (not on /mock or /mock/*/analysis)
+  const isMockSession = /^\/mock\/[^/]+$/.test(pathname);
+  if (isMockSession) return null;
+
   return (
     <nav className="hidden md:flex items-center gap-0.5">
       {navItems.map(({ href, label, icon: Icon }) => {

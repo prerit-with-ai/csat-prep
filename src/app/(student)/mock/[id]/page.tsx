@@ -172,7 +172,7 @@ export default function MockTestPage() {
 
   if (state.phase === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="py-20 flex items-center justify-center">
         <p className="text-body" style={{ color: 'var(--text-secondary)' }}>
           Loading mock test...
         </p>
@@ -182,7 +182,7 @@ export default function MockTestPage() {
 
   if (state.phase === 'error') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="py-20 flex flex-col items-center justify-center gap-4">
         <p className="text-body" style={{ color: 'var(--color-wrong)' }}>
           Error: {state.errorMessage}
         </p>
@@ -240,7 +240,7 @@ export default function MockTestPage() {
 
   if (state.phase === 'submitting') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="py-20 flex items-center justify-center">
         <p className="text-body" style={{ color: 'var(--text-secondary)' }}>
           Submitting mock test...
         </p>
@@ -285,31 +285,34 @@ export default function MockTestPage() {
         </div>
       )}
 
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-section-header" style={{ color: 'var(--text-primary)' }}>
-            Mock Test
-          </h1>
-          {state.phase === 'first_pass' && (
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              Question {state.currentIndex + 1} of {state.questions.length}
-            </p>
-          )}
-          {state.phase === 'review_b' && (
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              Review B: {state.bQueueIndex + 1} of {state.bQueue.length}
-            </p>
-          )}
+      {/* Session bar — progress + timer */}
+      <div
+        className="flex items-center justify-between mb-5 px-4 py-3 rounded-xl"
+        style={{ backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-default)' }}
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>
+            {state.phase === 'review_b' ? 'Review B' : 'First pass'}
+          </span>
+          <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+            {state.phase === 'review_b'
+              ? `${state.bQueueIndex + 1} / ${state.bQueue.length}`
+              : `${state.currentIndex + 1} / ${state.questions.length}`}
+          </span>
         </div>
-        {/* Timer */}
-        <div className="text-body" style={{ color: getTimerColor() }}>
+        <div
+          className="text-sm font-semibold tabular-nums"
+          style={{ color: getTimerColor() }}
+        >
           ⏱ {formatTime(secondsLeft)}
         </div>
       </div>
 
-      {/* Question navigator */}
-      <div className="flex flex-wrap gap-1 mb-6">
+      {/* Question navigator — horizontal scroll on mobile */}
+      <div
+        className="flex gap-1 mb-5 pb-1"
+        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}
+      >
         {state.questions.map((q, i) => {
           const resp = state.responses[i];
           const tagColor = resp?.abcTag === 'A' ? 'var(--color-correct)'
@@ -321,17 +324,18 @@ export default function MockTestPage() {
             <div
               key={q.id}
               style={{
-                width: 28,
-                height: 28,
+                width: 26,
+                height: 26,
                 borderRadius: '50%',
                 border: isCurrent ? '2px solid var(--text-primary)' : `2px solid ${tagColor}`,
                 backgroundColor: resp?.abcTag ? tagColor : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: 600,
                 color: resp?.abcTag ? '#fff' : 'var(--text-secondary)',
+                flexShrink: 0,
               }}
             >
               {i + 1}
@@ -369,32 +373,31 @@ export default function MockTestPage() {
 
       {/* ABC Tag buttons */}
       <div className="mb-4">
-        <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
-          Tag this question:
+        <p className="text-xs mb-2 font-medium" style={{ color: 'var(--text-tertiary)' }}>
+          Tag this question
         </p>
-        <div className="flex gap-3">
-          {(['A', 'B', 'C'] as const).map((tag) => {
+        <div className="flex gap-2">
+          {([
+            { tag: 'A', label: 'Ab Karo', color: 'var(--color-correct)' },
+            { tag: 'B', label: 'Baad mein', color: 'var(--color-amber)' },
+            { tag: 'C', label: 'Chorh Do', color: 'var(--color-wrong)' },
+          ] as const).map(({ tag, label, color }) => {
             const isSelected = currentResponse?.abcTag === tag;
-            const borderColor = tag === 'A' ? 'var(--color-correct)'
-                              : tag === 'B' ? 'var(--color-amber)'
-                              : 'var(--color-wrong)';
             return (
               <button
                 key={tag}
                 onClick={() => setTag(tag)}
+                className="flex-1 flex flex-col items-center py-2.5 px-1 rounded-lg transition-colors"
                 style={{
-                  flex: 1,
-                  padding: '10px',
-                  borderRadius: 8,
-                  border: '2px solid',
-                  borderColor: isSelected ? borderColor : 'var(--border-default)',
-                  backgroundColor: isSelected ? borderColor : 'transparent',
+                  border: `2px solid ${isSelected ? color : 'var(--border-default)'}`,
+                  backgroundColor: isSelected ? color : 'transparent',
                   color: isSelected ? '#fff' : 'var(--text-secondary)',
-                  fontWeight: 600,
-                  fontSize: 14,
                 }}
               >
-                {tag === 'A' ? 'A — Ab Karo' : tag === 'B' ? 'B — Baad mein' : 'C — Chorh Do'}
+                <span style={{ fontSize: 15, fontWeight: 700, lineHeight: 1 }}>{tag}</span>
+                <span style={{ fontSize: 10, marginTop: 2, opacity: isSelected ? 0.85 : 0.7 }}>
+                  {label}
+                </span>
               </button>
             );
           })}
