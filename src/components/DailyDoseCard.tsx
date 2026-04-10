@@ -24,19 +24,16 @@ export default function DailyDoseCard() {
   useEffect(() => {
     const fetchDailyDose = async () => {
       try {
-        const response = await fetch('/api/daily');
-        if (!response.ok) {
-          throw new Error('Failed to fetch daily dose');
-        }
+        const response = await fetch("/api/daily");
+        if (!response.ok) throw new Error("Failed to fetch daily dose");
         const result = await response.json();
         setData(result);
       } catch (error) {
-        console.error('Error fetching daily dose:', error);
+        console.error("Error fetching daily dose:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchDailyDose();
   }, []);
 
@@ -45,11 +42,11 @@ export default function DailyDoseCard() {
       <div
         className="p-5 rounded-xl"
         style={{
-          border: '1px solid var(--border-default)',
-          backgroundColor: 'var(--bg-primary)',
+          border: "1px solid var(--border-default)",
+          backgroundColor: "var(--bg-primary)",
         }}
       >
-        <p className="text-body" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
           Loading...
         </p>
       </div>
@@ -61,20 +58,20 @@ export default function DailyDoseCard() {
       <div
         className="p-5 rounded-xl"
         style={{
-          border: '1px solid var(--border-default)',
-          backgroundColor: 'var(--bg-primary)',
+          border: "1px solid var(--border-default)",
+          backgroundColor: "var(--bg-primary)",
         }}
       >
-        <p className="text-base font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
+        <p className="text-base font-medium mb-2" style={{ color: "var(--text-primary)" }}>
           Daily Dose
         </p>
-        <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
           Unable to load today&apos;s practice. Try refreshing.
         </p>
         <button
           onClick={() => window.location.reload()}
           className="text-sm underline"
-          style={{ color: 'var(--text-primary)' }}
+          style={{ color: "var(--text-primary)" }}
         >
           Refresh
         </button>
@@ -83,54 +80,74 @@ export default function DailyDoseCard() {
   }
 
   const { dose, answeredQuestionIds, streak } = data;
+  const total = dose.questionCount;
+  const done = answeredQuestionIds.length;
   const isCompleted = dose.completed;
-  const isInProgress = answeredQuestionIds.length > 0 && !isCompleted;
-  const isNotStarted = answeredQuestionIds.length === 0 && !isCompleted;
+  const isInProgress = done > 0 && !isCompleted;
+  const isNotStarted = done === 0 && !isCompleted;
 
   return (
     <Link
       href="/daily/practice"
-      className="block p-5 rounded-xl transition-opacity hover:opacity-80"
+      className="block rounded-xl transition-opacity hover:opacity-90"
       style={{
-        border: '1px solid var(--border-default)',
-        backgroundColor: 'var(--bg-primary)',
+        backgroundColor: "var(--color-amber-bg)",
+        border: "1px solid var(--color-amber)",
+        padding: "20px",
       }}
     >
-      <div>
-        <h3 className="text-base font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
-          {isCompleted ? 'Daily Dose ✓' : 'Daily Dose'}
-        </h3>
-
-        {isNotStarted && (
-          <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
-            {dose.questionCount} questions · Mixed practice
-          </p>
-        )}
-
-        {isInProgress && (
-          <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
-            Continue ({answeredQuestionIds.length}/{dose.questionCount})
-          </p>
-        )}
-
-        {isCompleted && (
-          <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
-            Completed · {dose.score}/{dose.questionCount} correct
-          </p>
-        )}
-
-        {streak > 0 && (
-          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-            🔥 {streak} day streak
-          </p>
-        )}
-
-        <p className="text-sm mt-3" style={{ color: 'var(--text-primary)' }}>
-          {isNotStarted && "Start today's practice →"}
-          {isInProgress && 'Continue →'}
-          {isCompleted && 'View Summary →'}
-        </p>
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+            {isCompleted ? "Daily Dose ✓" : "Daily Dose"}
+          </span>
+          {streak > 0 && (
+            <span
+              data-testid="dose-streak"
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{
+                backgroundColor: "var(--color-amber)",
+                color: "#fff",
+              }}
+            >
+              🔥 {streak}
+            </span>
+          )}
+        </div>
+        <span className="text-sm" style={{ color: "var(--color-amber)" }}>
+          {isCompleted
+            ? `${dose.score ?? done}/${total}`
+            : `${done} of ${total}`}
+        </span>
       </div>
+
+      {/* Progress bar — 18 segments */}
+      <div
+        data-testid="dose-progress"
+        className="flex gap-0.5 mb-3"
+        aria-label={`${done} of ${total} questions done`}
+      >
+        {Array.from({ length: total }).map((_, i) => (
+          <div
+            key={i}
+            className="flex-1 rounded-full"
+            style={{
+              height: "6px",
+              backgroundColor: i < done
+                ? "var(--color-amber)"
+                : "var(--border-default)",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* CTA */}
+      <p className="text-sm font-medium" style={{ color: "var(--color-amber)" }}>
+        {isNotStarted && "Start today's practice →"}
+        {isInProgress && "Continue →"}
+        {isCompleted && "View Summary →"}
+      </p>
     </Link>
   );
 }
