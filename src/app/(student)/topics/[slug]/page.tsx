@@ -9,6 +9,18 @@ import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import Link from "next/link";
 import { ReadinessButtons } from "./ReadinessButtons";
 
+const sectionVars = {
+  rc: { bg: "--section-rc-bg", accent: "--section-rc", name: "Reading Comprehension" },
+  lr: { bg: "--section-lr-bg", accent: "--section-lr", name: "Logical Reasoning" },
+  math: { bg: "--section-math-bg", accent: "--section-math", name: "Mathematics" },
+};
+
+const resourceTypeBadges = {
+  video: { label: "Video", bg: "var(--color-info-bg)", text: "var(--color-info)" },
+  pdf: { label: "PDF", bg: "var(--color-amber-bg)", text: "var(--color-amber)" },
+  article: { label: "Article", bg: "var(--bg-tertiary)", text: "var(--text-secondary)" },
+};
+
 export default async function TopicDetailPage({
   params,
 }: {
@@ -24,7 +36,6 @@ export default async function TopicDetailPage({
     redirect("/login");
   }
 
-  // Fetch topic by slug
   const [topic] = await db
     .select()
     .from(topics)
@@ -35,123 +46,143 @@ export default async function TopicDetailPage({
     notFound();
   }
 
-  // Fetch resources for topic
-  const topicResources = await db
-    .select()
-    .from(resources)
-    .where(eq(resources.topicId, topic.id))
-    .orderBy(asc(resources.displayOrder));
+  const [topicResources, topicPatternTypes, userProgressArr] = await Promise.all([
+    db.select().from(resources).where(eq(resources.topicId, topic.id)).orderBy(asc(resources.displayOrder)),
+    db.select().from(patternTypes).where(eq(patternTypes.topicId, topic.id)).orderBy(asc(patternTypes.displayOrder)),
+    db.select().from(topicProgress).where(and(eq(topicProgress.userId, session.user.id), eq(topicProgress.topicId, topic.id))).limit(1),
+  ]);
 
-  // Fetch pattern types for topic
-  const topicPatternTypes = await db
-    .select()
-    .from(patternTypes)
-    .where(eq(patternTypes.topicId, topic.id))
-    .orderBy(asc(patternTypes.displayOrder));
-
-  // Fetch user's progress for this topic
-  const [userProgress] = await db
-    .select()
-    .from(topicProgress)
-    .where(
-      and(
-        eq(topicProgress.userId, session.user.id),
-        eq(topicProgress.topicId, topic.id)
-      )
-    )
-    .limit(1);
+  const userProgress = userProgressArr[0];
 
   // Check dependencies
   let blockedByTopics: typeof topics.$inferSelect[] = [];
   let dependenciesCleared = true;
 
   if (topic.dependencyIds && topic.dependencyIds.length > 0) {
-    // Fetch dependency topics
     const dependencyTopics = await db
       .select()
       .from(topics)
       .where(inArray(topics.id, topic.dependencyIds));
 
-    // Fetch progress for dependency topics
-    const dependencyProgressRecords = await db
+    const dependencyProgress = await db
       .select()
       .from(topicProgress)
-      .where(
-        and(
-          eq(topicProgress.userId, session.user.id),
-          inArray(topicProgress.topicId, topic.dependencyIds)
-        )
-      );
+      .where(and(eq(topicProgress.userId, session.user.id), inArray(topicProgress.topicId, topic.dependencyIds)));
 
-    const clearedDependencyIds = new Set(
-      dependencyProgressRecords
-        .filter((p) => p.status === "green")
-        .map((p) => p.topicId)
+    const clearedIds = new Set(
+      dependencyProgress.filter((p) => p.status === "green").map((p) => p.topicId)
     );
 
-    blockedByTopics = dependencyTopics.filter(
-      (t) => !clearedDependencyIds.has(t.id)
-    );
+    blockedByTopics = dependencyTopics.filter((t) => !clearedIds.has(t.id));
     dependenciesCleared = blockedByTopics.length === 0;
   }
 
-  const sectionColors = {
-    rc: { bg: "var(--section-rc-bg)", text: "var(--section-rc)" },
-    lr: { bg: "var(--section-lr-bg)", text: "var(--section-lr)" },
-    math: { bg: "var(--section-math-bg)", text: "var(--section-math)" },
-  };
-
-  const sectionColor = sectionColors[topic.section as keyof typeof sectionColors];
-
-  const resourceTypeBadges = {
-    video: { label: "Video", bg: "var(--color-info-bg)", text: "var(--color-info)" },
-    pdf: { label: "PDF", bg: "var(--color-amber-bg)", text: "var(--color-amber)" },
-    article: { label: "Article", bg: "var(--bg-tertiary)", text: "var(--text-secondary)" },
-  };
+  const sec = sectionVars[topic.section as keyof typeof sectionVars];
+  const statusColor = !userProgress
+    ? "var(--text-tertiary)"
+    : userProgress.status === "red"
+    ? "var(--color-wrong)"
+    : userProgress.status === "amber"
+    ? "var(--color-amber)"
+    : "var(--color-correct)";
+  const statusLabel = !userProgress
+    ? "Not started"
+    : userProgress.status === "red"
+    ? "Started"
+    : userProgress.status === "amber"
+    ? "In progress"
+    : "Completed";
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm mb-4 hover:opacity-70 transition-opacity"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          ← Dashboard
-        </Link>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <h1
-            className="text-page-title"
-            style={{ color: "var(--text-primary)" }}
+    <div className="space-y-0">
+      {/* ── Colored section header band ──────────────────────────────────────── */}
+      <div
+        data-testid="topic-header"
+        className="rounded-2xl mb-6 overflow-hidden"
+        style={{ backgroundColor: `var(${sec.bg})`, border: `1px solid var(${sec.accent})` }}
+      >
+        {/* Back link */}
+        <div className="px-5 pt-4 pb-0">
+          <Link
+            href="/topics"
+            className="inline-flex items-center gap-1 text-xs font-medium hover:opacity-70 transition-opacity"
+            style={{ color: `var(${sec.accent})` }}
           >
-            {topic.name}
-          </h1>
-          <span
-            className="px-3 py-1 rounded-full text-sm font-medium"
-            style={{
-              backgroundColor: sectionColor.bg,
-              color: sectionColor.text,
-            }}
-          >
-            {topic.section.toUpperCase()}
-          </span>
+            ← Topics
+          </Link>
+        </div>
+
+        {/* Topic name + section + status */}
+        <div className="px-5 pt-3 pb-4">
+          <div className="flex items-start justify-between gap-4 flex-wrap mb-1">
+            <h1
+              className="text-page-title"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {topic.name}
+            </h1>
+            <div className="flex items-center gap-2">
+              {userProgress && (
+                <span className="text-xs font-medium" style={{ color: statusColor }}>
+                  ● {statusLabel}
+                </span>
+              )}
+              <span
+                className="px-3 py-1 rounded-full text-xs font-semibold"
+                style={{
+                  backgroundColor: `var(${sec.accent})`,
+                  color: "#fff",
+                }}
+              >
+                {topic.section.toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <p className="text-xs mb-4" style={{ color: `var(${sec.accent})` }}>
+            {sec.name}
+          </p>
+
+          {/* Primary CTAs in header */}
+          {dependenciesCleared && (
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/topics/${slug}/practice`}
+                className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold"
+                style={{
+                  backgroundColor: `var(${sec.accent})`,
+                  color: "#fff",
+                }}
+              >
+                Start Practice →
+              </Link>
+              {topicPatternTypes.length > 0 && (
+                <Link
+                  href={`/topics/${slug}/drill`}
+                  className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium"
+                  style={{
+                    backgroundColor: "var(--bg-primary)",
+                    border: `1px solid var(${sec.accent})`,
+                    color: `var(${sec.accent})`,
+                  }}
+                >
+                  Pattern Drill
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Dependency gate */}
+      {/* ── Dependency gate ───────────────────────────────────────────────────── */}
       {!dependenciesCleared && (
         <div
+          className="rounded-xl p-5 mb-6"
           style={{
             backgroundColor: "var(--color-amber-bg)",
             border: "1px solid var(--color-amber)",
           }}
-          className="rounded-xl p-5"
         >
-          <p
-            className="text-body font-medium mb-2"
-            style={{ color: "var(--color-amber)" }}
-          >
+          <p className="text-body font-medium mb-2" style={{ color: "var(--color-amber)" }}>
             ⚠ Complete these topics first:
           </p>
           <ul className="list-disc pl-5 space-y-1">
@@ -170,89 +201,75 @@ export default async function TopicDetailPage({
         </div>
       )}
 
-      {/* Cheatsheet section */}
+      {/* ── Cheatsheet ────────────────────────────────────────────────────────── */}
       {topic.cheatsheet && (
-        <div
-          style={{
-            backgroundColor: "var(--bg-primary)",
-            border: "1px solid var(--border-default)",
-          }}
-          className="rounded-xl p-5"
-        >
-          <h2
-            className="text-section mb-4"
-            style={{ color: "var(--text-primary)" }}
+        <div className="mb-6">
+          <h2 className="text-section mb-4">Cheatsheet</h2>
+          <div
+            className="rounded-xl p-5"
+            style={{
+              backgroundColor: "var(--bg-primary)",
+              border: "1px solid var(--border-default)",
+            }}
           >
-            Cheatsheet
-          </h2>
-          <MarkdownRenderer content={topic.cheatsheet} />
+            <MarkdownRenderer content={topic.cheatsheet} />
+          </div>
         </div>
       )}
 
-      {/* Pattern Types section */}
+      {/* ── Pattern Types ─────────────────────────────────────────────────────── */}
       {topicPatternTypes.length > 0 && (
-        <div
-          style={{
-            backgroundColor: "var(--bg-primary)",
-            border: "1px solid var(--border-default)",
-          }}
-          className="rounded-xl p-5"
-        >
-          <h2
-            className="text-section mb-4"
-            style={{ color: "var(--text-primary)" }}
+        <div className="mb-6">
+          <h2 className="text-section mb-4">What you&apos;ll learn</h2>
+          <div
+            className="rounded-xl overflow-hidden"
+            style={{ border: "1px solid var(--border-default)" }}
           >
-            What you'll learn
-          </h2>
-          <ul className="space-y-3">
-            {topicPatternTypes.map((pattern) => (
-              <li key={pattern.id}>
-                <h3
-                  className="font-medium text-body mb-1"
-                  style={{ color: "var(--text-primary)" }}
-                >
+            {topicPatternTypes.map((pattern, idx) => (
+              <div
+                key={pattern.id}
+                className="px-5 py-4"
+                style={{
+                  backgroundColor: "var(--bg-primary)",
+                  borderTop: idx > 0 ? "1px solid var(--border-subtle)" : "none",
+                }}
+              >
+                <h3 className="font-medium text-sm mb-0.5" style={{ color: "var(--text-primary)" }}>
                   {pattern.name}
                 </h3>
                 {pattern.description && (
-                  <p
-                    className="text-sm"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
+                  <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                     {pattern.description}
                   </p>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 
-      {/* Resources section */}
+      {/* ── Resources ─────────────────────────────────────────────────────────── */}
       {topicResources.length > 0 && (
-        <div
-          style={{
-            backgroundColor: "var(--bg-primary)",
-            border: "1px solid var(--border-default)",
-          }}
-          className="rounded-xl p-5"
-        >
-          <h2
-            className="text-section mb-4"
-            style={{ color: "var(--text-primary)" }}
+        <div className="mb-6">
+          <h2 className="text-section mb-4">Study Resources</h2>
+          <div
+            className="rounded-xl overflow-hidden"
+            style={{ border: "1px solid var(--border-default)" }}
           >
-            Study Resources
-          </h2>
-          <ul className="space-y-3">
-            {topicResources.map((resource) => {
+            {topicResources.map((resource, idx) => {
               const badge = resourceTypeBadges[resource.type as keyof typeof resourceTypeBadges];
               return (
-                <li key={resource.id} className="flex items-start gap-3">
+                <div
+                  key={resource.id}
+                  className="flex items-start gap-3 px-5 py-4"
+                  style={{
+                    backgroundColor: "var(--bg-primary)",
+                    borderTop: idx > 0 ? "1px solid var(--border-subtle)" : "none",
+                  }}
+                >
                   <span
                     className="px-2 py-0.5 rounded text-xs font-medium shrink-0"
-                    style={{
-                      backgroundColor: badge.bg,
-                      color: badge.text,
-                    }}
+                    style={{ backgroundColor: badge.bg, color: badge.text }}
                   >
                     {badge.label}
                   </span>
@@ -260,74 +277,39 @@ export default async function TopicDetailPage({
                     href={resource.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-body hover:underline"
+                    className="text-sm hover:underline"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {resource.title}
                   </a>
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </div>
         </div>
       )}
 
-      {/* Readiness section */}
+      {/* ── Readiness section ─────────────────────────────────────────────────── */}
       <div
+        className="rounded-xl p-5"
         style={{
           backgroundColor: "var(--bg-primary)",
           border: "1px solid var(--border-default)",
         }}
-        className="rounded-xl p-5"
       >
-        <h2
-          className="text-section mb-2"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Are you ready to practice?
-        </h2>
-        <p
-          className="text-body mb-4"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Click below when you've read the cheatsheet and feel confident.
+        <h2 className="text-section mb-2">Are you ready to practice?</h2>
+        <p className="text-body mb-4" style={{ color: "var(--text-secondary)" }}>
+          Click below when you&apos;ve read the cheatsheet and feel confident.
         </p>
 
         {userProgress && (
           <div className="mb-4 flex items-center gap-2">
-            <span
-              className="text-sm"
-              style={{ color: "var(--text-tertiary)" }}
-            >
+            <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>
               Current status:
             </span>
-            <span
-              className="text-xs"
-              style={{
-                color:
-                  userProgress.status === "red"
-                    ? "var(--color-wrong)"
-                    : userProgress.status === "amber"
-                    ? "var(--color-amber)"
-                    : "var(--color-correct)",
-              }}
-            >
-              ●
-            </span>
-            <span
-              className="text-sm font-medium"
-              style={{
-                color:
-                  userProgress.status === "red"
-                    ? "var(--color-wrong)"
-                    : userProgress.status === "amber"
-                    ? "var(--color-amber)"
-                    : "var(--color-correct)",
-              }}
-            >
-              {userProgress.status === "red" && "Started"}
-              {userProgress.status === "amber" && "In progress"}
-              {userProgress.status === "green" && "Completed"}
+            <span className="text-xs" style={{ color: statusColor }}>●</span>
+            <span className="text-sm font-medium" style={{ color: statusColor }}>
+              {statusLabel}
             </span>
           </div>
         )}
