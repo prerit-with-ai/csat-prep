@@ -108,11 +108,24 @@ export const resources = pgTable("resources", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const passages = pgTable("passages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  topicId: uuid("topic_id")
+    .notNull()
+    .references(() => topics.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  passageText: text("passage_text").notNull(), // markdown supported
+  difficulty: text("difficulty").notNull().default("l2"), // 'l1' | 'l2' | 'l3'
+  isArchived: boolean("is_archived").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const questions = pgTable("questions", {
   id: uuid("id").primaryKey().defaultRandom(),
   topicId: uuid("topic_id")
     .notNull()
     .references(() => topics.id),
+  passageId: uuid("passage_id").references(() => passages.id, { onDelete: "set null" }),
   patternTypeId: uuid("pattern_type_id").references(() => patternTypes.id),
   subtopic: text("subtopic"),
   difficulty: text("difficulty").notNull(), // 'l1' | 'l2' | 'l3'

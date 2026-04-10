@@ -9,12 +9,14 @@ import {
   BarChart2,
   Upload,
   Flag,
+  FileText,
 } from "lucide-react";
 
 const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/questions", label: "Questions", icon: HelpCircle, exact: false },
   { href: "/admin/topics", label: "Topics", icon: Layers, exact: false },
+  { href: "/admin/passages", label: "Passages", icon: FileText, exact: false },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart2, exact: false },
   { href: "/admin/import", label: "Import", icon: Upload, exact: false },
   { href: "/admin/flags", label: "Flags", icon: Flag, exact: false },

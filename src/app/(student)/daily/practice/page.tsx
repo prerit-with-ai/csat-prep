@@ -6,6 +6,7 @@ import { useDailySession, type DailyQuestion } from "@/hooks/use-daily-session";
 import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
 import { openFormulaCard } from "@/components/FormulaFab";
+import { PassageDisplay } from "@/components/PassageDisplay";
 
 export default function DailyPracticePage() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -303,6 +304,11 @@ export default function DailyPracticePage() {
           </div>
         )}
       </div>
+
+      {/* Passage (RC questions) */}
+      {currentQuestion.passageId && (
+        <PassageDisplay passageId={currentQuestion.passageId} />
+      )}
 
       {/* Question */}
       <div className="mb-8 p-5 rounded-xl" style={{ border: '1px solid var(--border-default)' }}>

@@ -7,6 +7,7 @@ import { z } from "zod";
 
 const questionSchema = z.object({
   topicId: z.string().uuid("Invalid topic ID"),
+  passageId: z.string().uuid().optional().nullable(),
   patternTypeId: z.string().uuid("Invalid pattern type ID").optional(),
   subtopic: z.string().optional(),
   difficulty: z.enum(["l1", "l2", "l3"]),

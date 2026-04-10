@@ -7,6 +7,7 @@ import { usePracticeSession, type PracticeQuestion } from "@/hooks/use-practice-
 import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
 import { openFormulaCard } from "@/components/FormulaFab";
+import { PassageDisplay } from "@/components/PassageDisplay";
 
 type Topic = {
   id: string;
@@ -371,6 +372,11 @@ export default function PracticePage() {
           </div>
         )}
       </div>
+
+      {/* Passage (RC questions) */}
+      {currentQuestion.passageId && (
+        <PassageDisplay passageId={currentQuestion.passageId} />
+      )}
 
       {/* Question */}
       <div className="mb-8 p-5 rounded-xl" style={{ border: '1px solid var(--border-default)' }}>

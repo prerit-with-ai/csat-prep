@@ -16,16 +16,23 @@ interface PatternType {
   topicId: string;
 }
 
+interface Passage {
+  id: string;
+  title: string;
+}
+
 export default function NewQuestionPage() {
   const router = useRouter();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [patternTypes, setPatternTypes] = useState<PatternType[]>([]);
+  const [passages, setPassages] = useState<Passage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showOptionExplanations, setShowOptionExplanations] = useState(false);
 
   const [formData, setFormData] = useState({
     topicId: "",
+    passageId: "",
     patternTypeId: "",
     subtopic: "",
     difficulty: "l1" as "l1" | "l2" | "l3",
@@ -53,8 +60,10 @@ export default function NewQuestionPage() {
   useEffect(() => {
     if (formData.topicId) {
       fetchPatternTypes(formData.topicId);
+      fetchPassages(formData.topicId);
     } else {
       setPatternTypes([]);
+      setPassages([]);
     }
   }, [formData.topicId]);
 
@@ -88,6 +97,18 @@ export default function NewQuestionPage() {
     }
   };
 
+  const fetchPassages = async (topicId: string) => {
+    try {
+      const res = await fetch(`/api/admin/passages?topicId=${topicId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPassages(data.passages || []);
+      }
+    } catch {
+      setPassages([]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -96,6 +117,7 @@ export default function NewQuestionPage() {
     try {
       const payload = {
         ...formData,
+        passageId: formData.passageId || undefined,
         patternTypeId: formData.patternTypeId || undefined,
         subtopic: formData.subtopic || undefined,
         detailedSolution: formData.detailedSolution || undefined,
@@ -225,6 +247,28 @@ export default function NewQuestionPage() {
                   No pattern types available for this topic
                 </p>
               )}
+            </div>
+
+            {/* Passage selector */}
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Passage (optional, for RC questions)
+              </label>
+              <select
+                value={formData.passageId}
+                onChange={(e) => setFormData({ ...formData, passageId: e.target.value })}
+                disabled={!formData.topicId || passages.length === 0}
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none disabled:opacity-50"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <option value="">None</option>
+                {passages.map((p) => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
             </div>
 
             <div>

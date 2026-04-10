@@ -4,6 +4,7 @@ export type PracticeQuestion = {
   id: string;
   topicId: string;
   patternTypeId: string | null;
+  passageId: string | null;
   difficulty: string;
   questionText: string;
   imageUrl: string | null;

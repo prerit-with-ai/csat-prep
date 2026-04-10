@@ -111,6 +111,7 @@ export async function POST(req: NextRequest) {
     id: q.id,
     topicId: q.topicId,
     patternTypeId: q.patternTypeId,
+    passageId: q.passageId,
     difficulty: q.difficulty,
     questionText: q.questionText,
     imageUrl: q.imageUrl,
