@@ -7,6 +7,7 @@ import {
   Layers,
   Timer,
   RotateCcw,
+  BarChart2,
   BookOpen,
 } from "lucide-react";
 
@@ -15,6 +16,7 @@ const navItems = [
   { href: "/topics", label: "Topics", icon: Layers },
   { href: "/mock", label: "Mocks", icon: Timer },
   { href: "/revision", label: "Revision", icon: RotateCcw },
+  { href: "/analytics", label: "Analytics", icon: BarChart2 },
   { href: "/strategy", label: "Strategy", icon: BookOpen },
 ];
 

@@ -7,7 +7,7 @@ import {
   Layers,
   Timer,
   RotateCcw,
-  BookOpen,
+  BarChart2,
 } from "lucide-react";
 
 const mobileNavItems = [
@@ -15,7 +15,7 @@ const mobileNavItems = [
   { href: "/topics", label: "Topics", icon: Layers },
   { href: "/mock", label: "Mocks", icon: Timer },
   { href: "/revision", label: "Revision", icon: RotateCcw },
-  { href: "/strategy", label: "More", icon: BookOpen },
+  { href: "/analytics", label: "Analytics", icon: BarChart2 },
 ];
 
 export function MobileNav() {
