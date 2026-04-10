@@ -170,7 +170,7 @@ export default function MockAnalysisPage() {
           Mock Complete
         </h1>
         <div className="p-6 rounded-xl mb-4" style={{ border: '1px solid var(--border-default)' }}>
-          <p className="text-section-header mb-3" style={{ color: 'var(--text-primary)' }}>
+          <p className="text-section mb-3" style={{ color: 'var(--text-primary)' }}>
             Net Score: {data.mock.netScore} / 200
           </p>
           <p className="text-body mb-4" style={{ color: 'var(--text-secondary)' }}>
@@ -194,7 +194,7 @@ export default function MockAnalysisPage() {
 
       {/* Section 2: ABC Analysis */}
       <div className="mb-8">
-        <h2 className="text-section-header mb-4" style={{ color: 'var(--text-primary)' }}>
+        <h2 className="text-section mb-4" style={{ color: 'var(--text-primary)' }}>
           ABC Analysis
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -239,10 +239,114 @@ export default function MockAnalysisPage() {
         </div>
       </div>
 
-      {/* Section 3: Time analysis */}
+      {/* Section 3: Calibration Report */}
+      <div className="mb-8">
+        <h2 className="text-section mb-1" style={{ color: 'var(--text-primary)' }}>
+          Calibration Report
+        </h2>
+        <p className="text-sm mb-4" style={{ color: 'var(--text-tertiary)' }}>
+          How accurately did your ABC tags reflect your actual ability?
+        </p>
+        <div className="space-y-3">
+
+          {/* A-tag calibration */}
+          {data.abcAnalysis.a.count > 0 && (() => {
+            const acc = data.abcAnalysis.a.accuracy;
+            const isOverconfident = acc < 70;
+            return (
+              <div
+                className="p-4 rounded-xl flex items-start justify-between gap-4"
+                style={{ border: `1px solid ${isOverconfident ? 'var(--color-amber)' : 'var(--border-default)'}` }}
+              >
+                <div>
+                  <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>
+                    A-tag accuracy
+                  </p>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    {isOverconfident
+                      ? `${acc}% accuracy on A-tagged questions. You marked ${data.abcAnalysis.a.wrong} as "confident" but got them wrong.`
+                      : `${acc}% accuracy. Your confidence is well-calibrated.`}
+                  </p>
+                </div>
+                <span
+                  className="shrink-0 text-sm font-semibold tabular-nums"
+                  style={{ color: isOverconfident ? 'var(--color-amber)' : 'var(--color-correct)' }}
+                >
+                  {acc}%
+                </span>
+              </div>
+            );
+          })()}
+
+          {/* C-tag leak */}
+          {data.abcAnalysis.c.count > 0 && (() => {
+            const leak = data.abcAnalysis.c.easySkipped;
+            const leakPct = Math.round(leak / data.abcAnalysis.c.count * 100);
+            const hasLeak = leak > 0;
+            return (
+              <div
+                className="p-4 rounded-xl flex items-start justify-between gap-4"
+                style={{ border: `1px solid ${hasLeak ? 'var(--color-wrong)' : 'var(--border-default)'}` }}
+              >
+                <div>
+                  <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>
+                    C-tag leak
+                  </p>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    {hasLeak
+                      ? `${leak} of your ${data.abcAnalysis.c.count} C-tags (${leakPct}%) were L1/L2 questions. These were doable — practice these patterns.`
+                      : `All ${data.abcAnalysis.c.count} C-tagged questions were genuinely hard (L3).`}
+                  </p>
+                </div>
+                <span
+                  className="shrink-0 text-sm font-semibold tabular-nums"
+                  style={{ color: hasLeak ? 'var(--color-wrong)' : 'var(--color-correct)' }}
+                >
+                  {leak}/{data.abcAnalysis.c.count}
+                </span>
+              </div>
+            );
+          })()}
+
+          {/* B-tag throughput */}
+          {data.abcAnalysis.b.count > 0 && (() => {
+            const throughput = Math.round(data.abcAnalysis.b.attempted / data.abcAnalysis.b.count * 100);
+            const bCorrectPct = data.abcAnalysis.b.attempted > 0
+              ? Math.round(data.abcAnalysis.b.correct / data.abcAnalysis.b.attempted * 100)
+              : 0;
+            const lowThroughput = throughput < 60;
+            return (
+              <div
+                className="p-4 rounded-xl flex items-start justify-between gap-4"
+                style={{ border: `1px solid ${lowThroughput ? 'var(--color-amber)' : 'var(--border-default)'}` }}
+              >
+                <div>
+                  <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>
+                    B-tag throughput
+                  </p>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    {data.abcAnalysis.b.attempted} of {data.abcAnalysis.b.count} B-tagged questions attempted in review.
+                    {data.abcAnalysis.b.attempted > 0 && ` ${bCorrectPct}% correct.`}
+                    {lowThroughput && ' Manage time better in first pass to leave room for review.'}
+                  </p>
+                </div>
+                <span
+                  className="shrink-0 text-sm font-semibold tabular-nums"
+                  style={{ color: lowThroughput ? 'var(--color-amber)' : 'var(--color-correct)' }}
+                >
+                  {throughput}%
+                </span>
+              </div>
+            );
+          })()}
+
+        </div>
+      </div>
+
+      {/* Section 4: Time analysis */}
       {data.wastedTime.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-section-header mb-4" style={{ color: 'var(--text-primary)' }}>
+          <h2 className="text-section mb-4" style={{ color: 'var(--text-primary)' }}>
             Time Analysis
           </h2>
           <div className="p-5 rounded-xl" style={{ border: '1px solid var(--border-default)' }}>
@@ -262,7 +366,7 @@ export default function MockAnalysisPage() {
 
       {/* Section 4: Question Review */}
       <div className="mb-8">
-        <h2 className="text-section-header mb-4" style={{ color: 'var(--text-primary)' }}>
+        <h2 className="text-section mb-4" style={{ color: 'var(--text-primary)' }}>
           Question Review
         </h2>
         <div className="space-y-4">
