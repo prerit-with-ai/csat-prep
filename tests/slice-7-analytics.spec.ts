@@ -105,7 +105,7 @@ test.describe("Slice 7: Analytics + Polish", () => {
 
     test("analytics page loads", async ({ page }) => {
       await page.goto("/admin/analytics");
-      await expect(page.getByText(/Analytics/i)).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole("heading", { name: "Analytics" })).toBeVisible({ timeout: 10000 });
     });
 
     test("GET /api/admin/flags returns correct structure", async ({ page }) => {
@@ -145,8 +145,8 @@ test.describe("Slice 7: Analytics + Polish", () => {
 
     test("admin dashboard shows Analytics and Flags nav cards", async ({ page }) => {
       await page.goto("/admin");
-      await expect(page.getByText(/Analytics/i)).toBeVisible({ timeout: 10000 });
-      await expect(page.getByText(/Flags/i)).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText(/Analytics/i).first()).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText(/Flags/i).first()).toBeVisible({ timeout: 10000 });
     });
   });
 });
