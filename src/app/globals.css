@@ -220,3 +220,12 @@ input:focus {
 .hover-row:hover {
   background-color: var(--bg-tertiary);
 }
+
+/* ─── Onboarding slide transition ───────────────────────────────────────── */
+@keyframes onboard-slide-in {
+  from { transform: translateX(32px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.onboard-enter {
+  animation: onboard-slide-in 0.28s ease-out;
+}
