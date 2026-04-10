@@ -153,6 +153,18 @@ export default function MockAnalysisPage() {
   const cutoffScore = 66;
   const cleared = netScore >= cutoffScore;
 
+  // Score hero color: green ≥66, amber 40–65, red <40
+  const heroColor = netScore >= cutoffScore
+    ? 'var(--color-correct)'
+    : netScore >= 40
+    ? 'var(--color-amber)'
+    : 'var(--color-wrong)';
+  const heroBg = netScore >= cutoffScore
+    ? 'var(--color-correct-bg)'
+    : netScore >= 40
+    ? 'var(--color-amber-bg)'
+    : 'var(--color-wrong-bg)';
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       {/* Back link */}
@@ -164,77 +176,128 @@ export default function MockAnalysisPage() {
         ← Back to Dashboard
       </Link>
 
-      {/* Section 1: Score card */}
-      <div className="mb-8">
-        <h1 className="text-page-title mb-4" style={{ color: 'var(--text-primary)' }}>
-          Mock Complete
-        </h1>
-        <div className="p-6 rounded-xl mb-4" style={{ border: '1px solid var(--border-default)' }}>
-          <p className="text-section mb-3" style={{ color: 'var(--text-primary)' }}>
-            Net Score: {data.mock.netScore} / 200
-          </p>
-          <p className="text-body mb-4" style={{ color: 'var(--text-secondary)' }}>
-            <span style={{ color: 'var(--color-correct)' }}>
-              Correct: {data.score.correct} (+{(data.score.correct * 2.5).toFixed(2)})
+      {/* Section 1: Score hero */}
+      <div
+        data-testid="score-hero"
+        className="rounded-2xl p-6 mb-6 text-center"
+        style={{ backgroundColor: heroBg, border: `1px solid ${heroColor}` }}
+      >
+        <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: heroColor }}>
+          Net Score
+        </p>
+        <p
+          data-testid="score-number"
+          className="font-bold tabular-nums mb-1"
+          style={{ color: heroColor, fontSize: '4rem', lineHeight: 1 }}
+        >
+          {netScore % 1 === 0 ? netScore.toFixed(0) : netScore.toFixed(2)}
+        </p>
+        <p className="text-sm mb-3" style={{ color: heroColor, opacity: 0.75 }}>
+          out of 200
+        </p>
+        <p className="text-sm font-medium mb-4" style={{ color: heroColor }}>
+          {cleared ? '✓ Qualifying cutoff cleared' : `${cutoffScore - netScore > 0 ? (cutoffScore - netScore).toFixed(2) : '0'} marks below qualifying cutoff (${cutoffScore})`}
+        </p>
+
+        {/* Correct / Wrong / Skipped inline row */}
+        <div className="flex justify-center gap-6 text-sm">
+          <span>
+            <span style={{ color: 'var(--color-correct)', fontWeight: 600 }}>
+              +{(data.score.correct * 2.5).toFixed(2)}
             </span>
-            {' | '}
-            <span style={{ color: 'var(--color-wrong)' }}>
-              Wrong: {data.score.wrong} (-{(data.score.wrong * 0.83).toFixed(2)})
+            <span style={{ color: 'var(--text-secondary)' }}> · {data.score.correct} correct</span>
+          </span>
+          <span>
+            <span style={{ color: 'var(--color-wrong)', fontWeight: 600 }}>
+              −{(data.score.wrong * 0.83).toFixed(2)}
             </span>
-            {' | '}
-            <span style={{ color: 'var(--text-tertiary)' }}>
-              Skipped: {data.score.skipped}
-            </span>
-          </p>
-          <p className="text-body" style={{ color: cleared ? 'var(--color-correct)' : 'var(--color-wrong)' }}>
-            Cutoff: {cutoffScore}/200 — {cleared ? 'Cleared' : 'Not cleared yet'}
-          </p>
+            <span style={{ color: 'var(--text-secondary)' }}> · {data.score.wrong} wrong</span>
+          </span>
+          <span style={{ color: 'var(--text-tertiary)' }}>
+            {data.score.skipped} skipped
+          </span>
         </div>
       </div>
 
-      {/* Section 2: ABC Analysis */}
+      {/* Section 2: ABC chips */}
       <div className="mb-8">
-        <h2 className="text-section mb-4" style={{ color: 'var(--text-primary)' }}>
-          ABC Analysis
+        <h2 className="text-section mb-3" style={{ color: 'var(--text-primary)' }}>
+          ABC Breakdown
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* A card */}
-          <div className="p-4 rounded-xl" style={{ border: '2px solid var(--color-correct)' }}>
-            <p className="text-sm font-semibold mb-2" style={{ color: 'var(--color-correct)' }}>
-              A — Ab Karo
-            </p>
-            <p className="text-body" style={{ color: 'var(--text-primary)' }}>
-              {data.abcAnalysis.a.count} tagged
-            </p>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+        <div data-testid="abc-chips" className="flex gap-3 flex-wrap">
+          {/* A chip */}
+          <div
+            className="flex-1 min-w-[100px] flex flex-col items-center py-4 px-3 rounded-xl"
+            style={{
+              backgroundColor: 'var(--color-correct-bg)',
+              border: '1px solid var(--color-correct)',
+            }}
+          >
+            <span
+              className="text-xs font-bold uppercase tracking-wider mb-1"
+              style={{ color: 'var(--color-correct)' }}
+            >
+              A
+            </span>
+            <span
+              className="font-bold tabular-nums"
+              style={{ color: 'var(--color-correct)', fontSize: '1.75rem', lineHeight: 1 }}
+            >
+              {data.abcAnalysis.a.count}
+            </span>
+            <span className="text-xs mt-1" style={{ color: 'var(--color-correct)', opacity: 0.8 }}>
               {data.abcAnalysis.a.accuracy.toFixed(0)}% accurate
-            </p>
+            </span>
           </div>
 
-          {/* B card */}
-          <div className="p-4 rounded-xl" style={{ border: '2px solid var(--color-amber)' }}>
-            <p className="text-sm font-semibold mb-2" style={{ color: 'var(--color-amber)' }}>
-              B — Baad mein
-            </p>
-            <p className="text-body" style={{ color: 'var(--text-primary)' }}>
-              {data.abcAnalysis.b.count} tagged
-            </p>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              {data.abcAnalysis.b.attempted} attempted in review
-            </p>
+          {/* B chip */}
+          <div
+            className="flex-1 min-w-[100px] flex flex-col items-center py-4 px-3 rounded-xl"
+            style={{
+              backgroundColor: 'var(--color-amber-bg)',
+              border: '1px solid var(--color-amber)',
+            }}
+          >
+            <span
+              className="text-xs font-bold uppercase tracking-wider mb-1"
+              style={{ color: 'var(--color-amber)' }}
+            >
+              B
+            </span>
+            <span
+              className="font-bold tabular-nums"
+              style={{ color: 'var(--color-amber)', fontSize: '1.75rem', lineHeight: 1 }}
+            >
+              {data.abcAnalysis.b.count}
+            </span>
+            <span className="text-xs mt-1" style={{ color: 'var(--color-amber)', opacity: 0.8 }}>
+              {data.abcAnalysis.b.attempted} reviewed
+            </span>
           </div>
 
-          {/* C card */}
-          <div className="p-4 rounded-xl" style={{ border: '2px solid var(--color-wrong)' }}>
-            <p className="text-sm font-semibold mb-2" style={{ color: 'var(--color-wrong)' }}>
-              C — Chorh Do
-            </p>
-            <p className="text-body" style={{ color: 'var(--text-primary)' }}>
-              {data.abcAnalysis.c.count} tagged
-            </p>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              {data.abcAnalysis.c.easySkipped} were easy (L1/L2)
-            </p>
+          {/* C chip */}
+          <div
+            className="flex-1 min-w-[100px] flex flex-col items-center py-4 px-3 rounded-xl"
+            style={{
+              backgroundColor: 'var(--color-wrong-bg)',
+              border: '1px solid var(--color-wrong)',
+            }}
+          >
+            <span
+              className="text-xs font-bold uppercase tracking-wider mb-1"
+              style={{ color: 'var(--color-wrong)' }}
+            >
+              C
+            </span>
+            <span
+              className="font-bold tabular-nums"
+              style={{ color: 'var(--color-wrong)', fontSize: '1.75rem', lineHeight: 1 }}
+            >
+              {data.abcAnalysis.c.count}
+            </span>
+            <span className="text-xs mt-1" style={{ color: 'var(--color-wrong)', opacity: 0.8 }}>
+              {data.abcAnalysis.c.easySkipped} easy skipped
+            </span>
           </div>
         </div>
       </div>
