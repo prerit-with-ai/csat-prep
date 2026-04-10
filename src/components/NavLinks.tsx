@@ -8,7 +8,6 @@ import {
   Timer,
   RotateCcw,
   BarChart2,
-  BookOpen,
 } from "lucide-react";
 
 const navItems = [
@@ -17,7 +16,6 @@ const navItems = [
   { href: "/mock", label: "Mocks", icon: Timer },
   { href: "/revision", label: "Revision", icon: RotateCcw },
   { href: "/analytics", label: "Analytics", icon: BarChart2 },
-  { href: "/strategy", label: "Strategy", icon: BookOpen },
 ];
 
 export function NavLinks() {
@@ -32,13 +30,13 @@ export function NavLinks() {
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors relative"
             style={{
-              color: isActive
-                ? "var(--text-primary)"
-                : "var(--text-secondary)",
-              backgroundColor: isActive ? "var(--bg-tertiary)" : "transparent",
-              fontWeight: isActive ? 500 : 400,
+              color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
+              fontWeight: isActive ? 600 : 400,
+              borderBottom: isActive ? "2px solid var(--text-primary)" : "2px solid transparent",
+              borderRadius: 0,
+              paddingBottom: "6px",
             }}
           >
             <Icon size={14} strokeWidth={1.5} />

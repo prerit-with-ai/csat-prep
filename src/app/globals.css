@@ -26,13 +26,13 @@
   --color-info: #2563EB;
   --color-info-bg: #EFF6FF;
 
-  /* Section identity */
-  --section-rc: #4A6FA5;
-  --section-rc-bg: #EDF2F8;
-  --section-lr: #0F766E;
-  --section-lr-bg: #E6F5F3;
-  --section-math: #92610A;
-  --section-math-bg: #FAF3E6;
+  /* Section identity — vivid pastels */
+  --section-rc: #5B7EC9;
+  --section-rc-bg: #E8EFFE;
+  --section-lr: #3A9A76;
+  --section-lr-bg: #E3F5EB;
+  --section-math: #C0681A;
+  --section-math-bg: #FDEEE0;
 
   /* ABC tags */
   --abc-a: #16A34A;
@@ -75,9 +75,12 @@
     --color-info: #60A5FA;
     --color-info-bg: #1A2340;
 
-    --section-rc-bg: #1A2230;
-    --section-lr-bg: #0F2625;
-    --section-math-bg: #2A2010;
+    --section-rc: #7B9DD9;
+    --section-rc-bg: #1A2545;
+    --section-lr: #5BB892;
+    --section-lr-bg: #0D2B1E;
+    --section-math: #E07A30;
+    --section-math-bg: #2D1C08;
 
     --abc-a-bg: #142E1C;
     --abc-b-bg: #2E2510;
@@ -109,9 +112,12 @@ html.dark {
   --color-info: #60A5FA;
   --color-info-bg: #1A2340;
 
-  --section-rc-bg: #1A2230;
-  --section-lr-bg: #0F2625;
-  --section-math-bg: #2A2010;
+  --section-rc: #7B9DD9;
+  --section-rc-bg: #1A2545;
+  --section-lr: #5BB892;
+  --section-lr-bg: #0D2B1E;
+  --section-math: #E07A30;
+  --section-math-bg: #2D1C08;
 
   --abc-a-bg: #142E1C;
   --abc-b-bg: #2E2510;

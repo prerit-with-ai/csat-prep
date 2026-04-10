@@ -16,9 +16,15 @@ interface PatternType {
   topicId: string;
 }
 
+interface Passage {
+  id: string;
+  title: string;
+}
+
 interface Question {
   id: string;
   topicId: string;
+  passageId: string | null;
   patternTypeId: string | null;
   subtopic: string | null;
   difficulty: "l1" | "l2" | "l3";
@@ -47,6 +53,7 @@ export default function EditQuestionPage() {
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [patternTypes, setPatternTypes] = useState<PatternType[]>([]);
+  const [passages, setPassages] = useState<Passage[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -62,8 +69,10 @@ export default function EditQuestionPage() {
   useEffect(() => {
     if (formData?.topicId) {
       fetchPatternTypes(formData.topicId);
+      fetchPassages(formData.topicId);
     } else {
       setPatternTypes([]);
+      setPassages([]);
     }
   }, [formData?.topicId]);
 
@@ -103,6 +112,18 @@ export default function EditQuestionPage() {
     }
   };
 
+  const fetchPassages = async (topicId: string) => {
+    try {
+      const res = await fetch(`/api/admin/passages?topicId=${topicId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPassages(data.passages || []);
+      }
+    } catch {
+      setPassages([]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
@@ -113,6 +134,7 @@ export default function EditQuestionPage() {
     try {
       const payload = {
         ...formData,
+        passageId: formData.passageId || undefined,
         patternTypeId: formData.patternTypeId || undefined,
         subtopic: formData.subtopic || undefined,
         detailedSolution: formData.detailedSolution || undefined,
@@ -238,7 +260,7 @@ export default function EditQuestionPage() {
                 required
                 value={formData.topicId}
                 onChange={(e) =>
-                  setFormData({ ...formData, topicId: e.target.value, patternTypeId: null })
+                  setFormData({ ...formData, topicId: e.target.value, patternTypeId: null, passageId: null })
                 }
                 className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none"
                 style={{ borderColor: "var(--border-default)" }}
@@ -280,6 +302,29 @@ export default function EditQuestionPage() {
                   No pattern types available for this topic
                 </p>
               )}
+            </div>
+
+            <div>
+              <label
+                className="block text-sm font-medium mb-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Passage (optional, for RC questions)
+              </label>
+              <select
+                value={formData.passageId || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, passageId: e.target.value || null })
+                }
+                disabled={!formData.topicId || passages.length === 0}
+                className="w-full border rounded-lg px-3 py-2 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm focus:outline-none disabled:opacity-50"
+                style={{ borderColor: "var(--border-default)" }}
+              >
+                <option value="">None</option>
+                {passages.map((p) => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
             </div>
 
             <div>
