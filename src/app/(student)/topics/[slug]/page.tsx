@@ -338,7 +338,7 @@ export default async function TopicDetailPage({
           hasProgress={!!userProgress}
         />
 
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-3">
           <Link
             href={`/topics/${slug}/practice`}
             className="inline-block px-5 py-2.5 rounded-lg text-body font-medium"
@@ -349,6 +349,18 @@ export default async function TopicDetailPage({
           >
             Start Practice →
           </Link>
+          {topicPatternTypes.length > 0 && (
+            <Link
+              href={`/topics/${slug}/drill`}
+              className="inline-block px-5 py-2.5 rounded-lg text-body font-medium"
+              style={{
+                border: "1px solid var(--border-default)",
+                color: "var(--text-primary)",
+              }}
+            >
+              Pattern Drill
+            </Link>
+          )}
         </div>
       </div>
     </div>
