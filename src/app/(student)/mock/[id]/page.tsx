@@ -3,6 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useMockSession, type LocalResponse } from "@/hooks/use-mock-session";
+import { useMockKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { KeyboardHint } from "@/components/KeyboardHint";
 
 export default function MockTestPage() {
   const { id: mockId } = useParams() as { id: string };
@@ -10,6 +12,18 @@ export default function MockTestPage() {
   const { state, dispatch, setTag, setOption, advanceFirstPass, startReviewB, advanceReviewB, skipReview, submitMock, resetQuestionTimer } = useMockSession();
 
   const [secondsLeft, setSecondsLeft] = useState(0);
+
+  // Keyboard shortcuts for mock mode
+  useMockKeyboardShortcuts({
+    phase: state.phase,
+    currentAbcTag: state.responses[state.currentIndex]?.abcTag ?? null,
+    onSetTag: setTag,
+    onSetOption: setOption,
+    onAdvance: async () => {
+      if (state.phase === 'first_pass') await advanceFirstPass();
+      else if (state.phase === 'review_b') await advanceReviewB();
+    },
+  });
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch mock test and load data
@@ -438,6 +452,8 @@ export default function MockTestPage() {
           {state.bQueueIndex + 1 >= state.bQueue.length ? 'Submit Mock' : 'Next Review →'}
         </button>
       )}
+
+      <KeyboardHint mode="mock" />
     </div>
   );
 }

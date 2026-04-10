@@ -16,7 +16,11 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    const { error: authError } = await authClient.signUp.email({ email, password, name });
+    const { error: authError } = await authClient.signUp.email({
+      email,
+      password,
+      name,
+    });
 
     if (authError) {
       setError(authError.message ?? "Registration failed");
@@ -33,11 +37,11 @@ export default function RegisterPage() {
       style={{ backgroundColor: "var(--bg-secondary)" }}
     >
       <div className="w-full" style={{ maxWidth: "360px" }}>
-        {/* Header */}
-        <div className="mb-8">
+        {/* Wordmark */}
+        <div className="mb-10 text-center">
           <p
-            className="text-sm font-semibold uppercase mb-6"
-            style={{ color: "var(--text-tertiary)", letterSpacing: "0.1em" }}
+            className="text-xs font-semibold tracking-widest uppercase mb-4"
+            style={{ color: "var(--text-tertiary)", letterSpacing: "0.15em" }}
           >
             CSAT Cracker
           </p>
@@ -52,7 +56,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Card */}
+        {/* Form card */}
         <div
           className="rounded-xl p-6"
           style={{
@@ -76,6 +80,7 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 placeholder="Your name"
+                autoComplete="name"
               />
             </div>
 
@@ -94,6 +99,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
+                autoComplete="email"
               />
             </div>
 
@@ -113,6 +119,7 @@ export default function RegisterPage() {
                 required
                 minLength={8}
                 placeholder="Min. 8 characters"
+                autoComplete="new-password"
               />
             </div>
 
@@ -131,12 +138,15 @@ export default function RegisterPage() {
                 color: "var(--bg-primary)",
               }}
             >
-              {loading ? "Creating account..." : "Create account"}
+              {loading ? "Creating account…" : "Create account"}
             </button>
           </form>
         </div>
 
-        <p className="text-sm text-center mt-4" style={{ color: "var(--text-tertiary)" }}>
+        <p
+          className="text-sm text-center mt-4"
+          style={{ color: "var(--text-tertiary)" }}
+        >
           Already have an account?{" "}
           <Link
             href="/login"

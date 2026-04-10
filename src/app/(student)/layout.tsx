@@ -1,10 +1,12 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/components/LogoutButton";
 import Link from "next/link";
-import FormulaFab from "@/components/FormulaFab";
+import { LogoutButton } from "@/components/LogoutButton";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { NavLinks } from "@/components/NavLinks";
+import { MobileNav } from "@/components/MobileNav";
+import FormulaFab from "@/components/FormulaFab";
 
 export default async function StudentLayout({
   children,
@@ -24,35 +26,56 @@ export default async function StudentLayout({
       style={{ backgroundColor: "var(--bg-secondary)" }}
       className="min-h-screen"
     >
+      {/* Top header */}
       <header
         style={{
           backgroundColor: "var(--bg-primary)",
           borderBottom: "1px solid var(--border-default)",
         }}
-        className="px-4 py-3 flex items-center justify-between"
+        className="sticky top-0 z-40"
       >
-        <span
-          className="text-section font-semibold"
-          style={{ color: "var(--text-primary)" }}
+        <div
+          className="mx-auto px-4 flex items-center justify-between h-12"
+          style={{ maxWidth: "var(--max-page)" }}
         >
-          CSAT Cracker
-        </span>
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="text-sm" style={{ color: "var(--text-secondary)" }}>Dashboard</Link>
-          <Link href="/topics" className="text-sm" style={{ color: "var(--text-secondary)" }}>Topics</Link>
-          <Link href="/mock" className="text-sm" style={{ color: "var(--text-secondary)" }}>Mocks</Link>
-          <Link href="/revision" className="text-sm" style={{ color: "var(--text-secondary)" }}>Revision</Link>
-          <Link href="/strategy" className="text-sm" style={{ color: "var(--text-secondary)" }}>Strategy</Link>
-          <DarkModeToggle />
-          <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            {session.user.name}
-          </span>
-          <LogoutButton />
+          {/* Wordmark */}
+          <Link
+            href="/dashboard"
+            className="text-sm font-semibold shrink-0"
+            style={{ color: "var(--text-primary)" }}
+          >
+            CSAT Cracker
+          </Link>
+
+          {/* Desktop nav — hidden on mobile */}
+          <NavLinks />
+
+          {/* Right controls */}
+          <div className="flex items-center gap-2 shrink-0">
+            <DarkModeToggle />
+            <span
+              className="text-sm hidden lg:block"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              {session.user.name}
+            </span>
+            <LogoutButton />
+          </div>
         </div>
       </header>
-      <main className="mx-auto px-4 py-8" style={{ maxWidth: "var(--max-page)" }}>
+
+      {/* Page content — extra bottom padding on mobile for the tab bar */}
+      <main
+        className="mx-auto px-4 py-8 pb-24 md:pb-8"
+        style={{ maxWidth: "var(--max-page)" }}
+      >
         {children}
       </main>
+
+      {/* Mobile bottom tab bar */}
+      <MobileNav />
+
+      {/* Formula FAB */}
       <FormulaFab />
     </div>
   );

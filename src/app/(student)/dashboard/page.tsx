@@ -6,6 +6,7 @@ import { topics, topicProgress, revisionQueue, mockTests } from "../../../../dri
 import { eq, asc, and, lte, inArray, sql, desc } from "drizzle-orm";
 import Link from "next/link";
 import DailyDoseCard from "@/components/DailyDoseCard";
+import { Badge } from "@/components/ui/badge";
 
 export default async function StudentDashboard() {
   const session = await auth.api.getSession({
@@ -74,15 +75,107 @@ export default async function StudentDashboard() {
   };
 
   const hasAnyTopics = allTopics.length > 0;
+  const isNewUser =
+    userProgress.length === 0 &&
+    recentMocks.length === 0 &&
+    revisionCount === 0;
 
   return (
     <div>
-      <h1
-        className="text-page-title mb-6"
-        style={{ color: "var(--text-primary)" }}
-      >
-        Welcome, {session.user.name}
-      </h1>
+      <div className="mb-8">
+        <h1 className="text-page-title mb-1">
+          Welcome back, {session.user.name.split(" ")[0]}
+        </h1>
+        <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
+          Keep the momentum going.
+        </p>
+      </div>
+
+      {/* Onboarding — shown only to brand-new students */}
+      {isNewUser && (
+        <div
+          className="mb-8 rounded-xl overflow-hidden"
+          style={{ border: "1px solid var(--border-default)" }}
+        >
+          <div
+            className="px-5 py-4"
+            style={{ borderBottom: "1px solid var(--border-default)", backgroundColor: "var(--bg-primary)" }}
+          >
+            <p className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>
+              Getting started
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+              Three steps to begin your CSAT preparation
+            </p>
+          </div>
+          {[
+            {
+              step: "1",
+              title: "Browse your topics",
+              desc: "Start with a cheatsheet, then attempt a checkpoint quiz.",
+              href: "/topics",
+              cta: "Go to Topics →",
+            },
+            {
+              step: "2",
+              title: "Do your Daily Dose",
+              desc: "18 mixed questions every day. Takes around 30 minutes.",
+              href: "/daily/practice",
+              cta: "Start today's dose →",
+            },
+            {
+              step: "3",
+              title: "Take a mock when ready",
+              desc: "Full 80-question mock with ABC methodology and analysis.",
+              href: "/mock",
+              cta: "Go to Mocks →",
+            },
+          ].map((item, idx, arr) => (
+            <Link
+              key={item.step}
+              href={item.href}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "16px 20px",
+                backgroundColor: "var(--bg-primary)",
+                borderBottom: idx < arr.length - 1 ? "1px solid var(--border-subtle)" : "none",
+                transition: "background-color 150ms",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--bg-tertiary)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--bg-primary)")
+              }
+            >
+              <div className="flex items-center gap-4">
+                <span
+                  className="flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold shrink-0"
+                  style={{
+                    backgroundColor: "var(--bg-tertiary)",
+                    color: "var(--text-secondary)",
+                  }}
+                >
+                  {item.step}
+                </span>
+                <div>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                    {item.title}
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+              <span className="text-sm shrink-0 ml-4" style={{ color: "var(--text-secondary)" }}>
+                {item.cta}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
 
       <div className="mb-8">
         <DailyDoseCard />
@@ -230,12 +323,14 @@ export default async function StudentDashboard() {
 
             return (
               <section key={sectionKey}>
-                <h2
-                  className="text-section mb-4"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  {sectionNames[sectionKey]}
-                </h2>
+                <div className="flex items-center gap-3 mb-4">
+                  <Badge variant={`section-${sectionKey}` as "section-rc" | "section-lr" | "section-math"}>
+                    {sectionKey.toUpperCase()}
+                  </Badge>
+                  <h2 className="text-section">
+                    {sectionNames[sectionKey]}
+                  </h2>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {sectionTopics.map((topic) => {
                     const progress = progressMap.get(topic.id);
@@ -247,8 +342,19 @@ export default async function StudentDashboard() {
                           backgroundColor: "var(--bg-primary)",
                           border: "1px solid var(--border-default)",
                           borderLeft: `3px solid var(--section-${sectionKey})`,
+                          display: "block",
+                          borderRadius: "12px",
+                          padding: "16px",
+                          transition: "background-color 150ms",
                         }}
-                        className="rounded-xl p-4 block hover:opacity-80 transition-opacity"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "var(--bg-tertiary)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "var(--bg-primary)")
+                        }
                       >
                         <h3
                           className="font-medium text-base mb-2"

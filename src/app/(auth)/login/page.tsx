@@ -15,7 +15,10 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const { error: authError } = await authClient.signIn.email({ email, password });
+    const { error: authError } = await authClient.signIn.email({
+      email,
+      password,
+    });
 
     if (authError) {
       setError(authError.message ?? "Login failed");
@@ -32,11 +35,11 @@ export default function LoginPage() {
       style={{ backgroundColor: "var(--bg-secondary)" }}
     >
       <div className="w-full" style={{ maxWidth: "360px" }}>
-        {/* Header */}
-        <div className="mb-8">
+        {/* Wordmark */}
+        <div className="mb-10 text-center">
           <p
-            className="text-sm font-semibold tracking-widest uppercase mb-6"
-            style={{ color: "var(--text-tertiary)", letterSpacing: "0.1em" }}
+            className="text-xs font-semibold tracking-widest uppercase mb-4"
+            style={{ color: "var(--text-tertiary)", letterSpacing: "0.15em" }}
           >
             CSAT Cracker
           </p>
@@ -51,7 +54,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Card */}
+        {/* Form card */}
         <div
           className="rounded-xl p-6"
           style={{
@@ -75,6 +78,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
+                autoComplete="email"
               />
             </div>
 
@@ -94,6 +98,7 @@ export default function LoginPage() {
                 required
                 minLength={8}
                 placeholder="••••••••"
+                autoComplete="current-password"
               />
             </div>
 
@@ -112,12 +117,15 @@ export default function LoginPage() {
                 color: "var(--bg-primary)",
               }}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
         </div>
 
-        <p className="text-sm text-center mt-4" style={{ color: "var(--text-tertiary)" }}>
+        <p
+          className="text-sm text-center mt-4"
+          style={{ color: "var(--text-tertiary)" }}
+        >
           No account?{" "}
           <Link
             href="/register"

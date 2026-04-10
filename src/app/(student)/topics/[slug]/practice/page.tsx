@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePracticeSession, type PracticeQuestion } from "@/hooks/use-practice-session";
+import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { KeyboardHint } from "@/components/KeyboardHint";
 
 type Topic = {
   id: string;
@@ -21,6 +23,15 @@ export default function PracticePage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const { state, dispatch, selectOption, submitAnswer, nextQuestion, restart } = usePracticeSession();
+
+  // Keyboard shortcuts
+  usePracticeKeyboardShortcuts({
+    phase: state.phase,
+    selectedOption: state.selectedOption,
+    onSelectOption: (key) => { if (state.phase === 'answering') selectOption(key); },
+    onConfirm: () => { if (topic && state.phase === 'answering' && state.selectedOption) submitAnswer(topic.id); },
+    onNext: () => { if (state.phase === 'solution') nextQuestion(); },
+  });
 
   // Fetch topic and load questions
   useEffect(() => {
@@ -504,6 +515,8 @@ export default function PracticePage() {
           {isSubmitting ? 'Confirming...' : 'Confirm Answer'}
         </button>
       )}
+
+      <KeyboardHint mode="practice" />
     </div>
   );
 }
