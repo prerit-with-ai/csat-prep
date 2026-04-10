@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDailySession, type DailyQuestion } from "@/hooks/use-daily-session";
 import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
+import { openFormulaCard } from "@/components/FormulaFab";
 
 export default function DailyPracticePage() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -349,13 +350,28 @@ export default function DailyPracticePage() {
           </div>
 
           {/* Smart solution */}
-          <div className="mb-6 p-5 rounded-xl" style={{ border: '1px solid var(--border-default)' }}>
+          <div className="mb-3 p-5 rounded-xl" style={{ border: '1px solid var(--border-default)' }}>
             <h3 className="text-section-header mb-3" style={{ color: 'var(--text-primary)' }}>
               Solution
             </h3>
             <p className="text-body" style={{ color: 'var(--text-primary)', lineHeight: '1.7' }}>
               {state.currentSolution.smartSolution}
             </p>
+          </div>
+
+          {/* Formula card deep-link */}
+          <div className="mb-6 flex">
+            <button
+              onClick={() => openFormulaCard(currentQuestion.topicId)}
+              className="flex items-center gap-1.5 text-sm transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            >
+              <span>∑</span>
+              <span>Formula cards for this topic</span>
+              <span style={{ color: 'var(--text-tertiary)' }}>→</span>
+            </button>
           </div>
 
           {/* Detailed solution toggle */}
