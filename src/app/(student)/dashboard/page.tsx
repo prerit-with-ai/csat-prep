@@ -2,11 +2,12 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { topics, topicProgress, revisionQueue, mockTests } from "../../../../drizzle/schema";
+import { topics, topicProgress, revisionQueue, mockTests, userSettings } from "../../../../drizzle/schema";
 import { eq, asc, and, lte, inArray, sql, desc } from "drizzle-orm";
 import Link from "next/link";
 import DailyDoseCard from "@/components/DailyDoseCard";
 import { Badge } from "@/components/ui/badge";
+import { ExamCountdown } from "@/components/ExamCountdown";
 
 export default async function StudentDashboard() {
   const session = await auth.api.getSession({
@@ -55,6 +56,14 @@ export default async function StudentDashboard() {
         lte(revisionQueue.nextReviewAt, sql`now()`)
       )
     );
+
+  // Fetch user settings (exam date)
+  const [settings] = await db
+    .select()
+    .from(userSettings)
+    .where(eq(userSettings.userId, session.user.id));
+
+  const examDate = settings?.examDate ? settings.examDate.toISOString() : null;
 
   // Build progress map: topicId -> progress
   const progressMap = new Map(
@@ -176,6 +185,10 @@ export default async function StudentDashboard() {
           ))}
         </div>
       )}
+
+      <div className="mb-4">
+        <ExamCountdown examDate={examDate} />
+      </div>
 
       <div className="mb-8">
         <DailyDoseCard />

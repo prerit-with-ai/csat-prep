@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Settings } from "lucide-react";
 import { LogoutButton } from "@/components/LogoutButton";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { NavLinks } from "@/components/NavLinks";
@@ -53,6 +54,14 @@ export default async function StudentLayout({
           {/* Right controls */}
           <div className="flex items-center gap-2 shrink-0">
             <DarkModeToggle />
+            <Link
+              href="/settings"
+              className="flex items-center justify-center w-8 h-8 rounded-md transition-opacity hover:opacity-70"
+              style={{ color: "var(--text-secondary)" }}
+              aria-label="Settings"
+            >
+              <Settings size={16} strokeWidth={1.5} />
+            </Link>
             <span
               className="text-sm hidden lg:block"
               style={{ color: "var(--text-tertiary)" }}

@@ -286,3 +286,11 @@ export const formulaCards = pgTable("formula_cards", {
   displayOrder: integer("display_order").notNull().default(0),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const userSettings = pgTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  examDate: timestamp("exam_date"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
