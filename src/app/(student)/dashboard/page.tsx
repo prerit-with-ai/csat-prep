@@ -143,21 +143,14 @@ export default async function StudentDashboard() {
             <Link
               key={item.step}
               href={item.href}
+              className="hover-row"
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "16px 20px",
-                backgroundColor: "var(--bg-primary)",
                 borderBottom: idx < arr.length - 1 ? "1px solid var(--border-subtle)" : "none",
-                transition: "background-color 150ms",
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--bg-tertiary)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--bg-primary)")
-              }
             >
               <div className="flex items-center gap-4">
                 <span
@@ -351,23 +344,14 @@ export default async function StudentDashboard() {
                       <Link
                         key={topic.id}
                         href={`/topics/${topic.slug}`}
+                        className="hover-row"
                         style={{
-                          backgroundColor: "var(--bg-primary)",
                           border: "1px solid var(--border-default)",
                           borderLeft: `3px solid var(--section-${sectionKey})`,
                           display: "block",
                           borderRadius: "12px",
                           padding: "16px",
-                          transition: "background-color 150ms",
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "var(--bg-tertiary)")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "var(--bg-primary)")
-                        }
                       >
                         <h3
                           className="font-medium text-base mb-2"

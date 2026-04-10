@@ -439,25 +439,16 @@ export default async function AnalyticsPage() {
                   <Link
                     key={mock.id}
                     href={`/mock/${mock.id}/analysis`}
+                    className="hover-row"
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                       padding: "12px 16px",
-                      backgroundColor: "var(--bg-primary)",
                       borderBottom: isLast
                         ? "none"
                         : "1px solid var(--border-subtle)",
-                      transition: "background-color 150ms",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--bg-tertiary)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--bg-primary)")
-                    }
                   >
                     <div>
                       <p

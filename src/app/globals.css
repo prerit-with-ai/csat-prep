@@ -205,3 +205,12 @@ input:focus {
   outline: none;
   border-color: var(--text-primary);
 }
+
+/* ─── Hover row ──────────────────────────────────────────────────────────── */
+.hover-row {
+  background-color: var(--bg-primary);
+  transition: background-color 150ms;
+}
+.hover-row:hover {
+  background-color: var(--bg-tertiary);
+}
