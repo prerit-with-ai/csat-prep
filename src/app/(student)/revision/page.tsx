@@ -182,7 +182,6 @@ export default function RevisionPage() {
         body: JSON.stringify({
           questionId: state.currentItem.question.id,
           selectedOption: state.selectedOption,
-          timeSpent,
         }),
       });
 

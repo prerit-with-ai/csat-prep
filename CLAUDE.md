@@ -21,7 +21,7 @@ A two-sided CSAT (UPSC Civil Services Aptitude Test) preparation platform. Stude
 - **Auth:** BetterAuth (roles: student, admin)
 - **Styling:** Tailwind CSS with CSS variables from design system
 - **Math rendering:** KaTeX via react-markdown + remark-math + rehype-katex
-- **Forms:** react-hook-form + zod (admin), raw handlers (student interactions)
+- **Forms:** Raw useState/handler patterns everywhere (admin and student)
 - **Icons:** lucide-react
 - **File storage:** Cloudflare R2 (S3-compatible)
 - **Testing:** Playwright (E2E per slice)
@@ -65,7 +65,6 @@ src/
   lib/
     db.ts                      # Drizzle client + Neon connection
     auth.ts                    # BetterAuth config
-    schemas.ts                 # Zod validation schemas (shared client + server)
     scoring.ts                 # CSAT scoring logic
     adaptive.ts                # Question serving algorithm
     revision.ts                # Revision queue logic
@@ -107,7 +106,7 @@ tests/
 
 ### Components
 - Default is **Server Component** (no `"use client"` directive).
-- Add `"use client"` only when the component needs: useState, useEffect, onClick handlers, browser APIs, or third-party client libraries (KaTeX, react-hook-form).
+- Add `"use client"` only when the component needs: useState, useEffect, onClick handlers, browser APIs, or third-party client libraries (KaTeX).
 - Server Components fetch data and pass it as props to client components.
 
 ### API Route Pattern
@@ -204,14 +203,14 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 ### TypeScript
 - Strict mode enabled
 - No `any` types — use proper types or `unknown` with narrowing
-- Zod schemas in `src/lib/schemas.ts` — shared between client validation and API validation
+- Zod validation schemas are defined inline in each API route file (no shared schemas module)
 - Database types inferred from Drizzle schema (`typeof topics.$inferSelect`)
 
 ### Tailwind
 - Use design system CSS variables for colors — never hardcode hex in Tailwind classes
 - Spacing via Tailwind classes matching 4/8px grid (p-4, gap-3, mt-6)
 - `max-w-3xl` for reading content, `max-w-5xl` for dashboards
-- `@tailwindcss/typography` plugin for markdown content styling
+- Markdown styling is handled manually in `src/components/MarkdownRenderer.tsx` using design system CSS variables. No typography plugin.
 
 ### Imports
 - Use `@/` path alias for `src/` directory
