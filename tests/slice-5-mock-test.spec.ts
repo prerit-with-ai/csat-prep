@@ -43,7 +43,7 @@ test.describe("Slice 5: Mock Tests", () => {
 
     await page.goto(`/mock/${mockId}`);
     await expect(page.getByText(/Mock Test/i)).toBeVisible({ timeout: 20000 });
-    await expect(page.getByText(/Question 1 of/)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("mock-progress")).toHaveText(/^1 \/ \d+$/, { timeout: 10000 });
   });
 
   test("mock test shows ABC tag buttons", async ({ page }) => {
@@ -54,7 +54,7 @@ test.describe("Slice 5: Mock Tests", () => {
     const { mockId } = await res.json();
 
     await page.goto(`/mock/${mockId}`);
-    await expect(page.getByText(/Question 1 of/)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId("mock-progress")).toHaveText(/^1 \/ \d+$/, { timeout: 20000 });
 
     await expect(page.getByRole("button", { name: /Ab Karo/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /Baad mein/i })).toBeVisible();
@@ -69,7 +69,7 @@ test.describe("Slice 5: Mock Tests", () => {
     const { mockId } = await res.json();
 
     await page.goto(`/mock/${mockId}`);
-    await expect(page.getByText(/Question 1 of/)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId("mock-progress")).toHaveText(/^1 \/ \d+$/, { timeout: 20000 });
 
     // Next button should be disabled
     await expect(page.getByRole("button", { name: /Next Question|Finish First Pass/i })).toBeDisabled();
@@ -87,7 +87,7 @@ test.describe("Slice 5: Mock Tests", () => {
     const { mockId } = await res.json();
 
     await page.goto(`/mock/${mockId}`);
-    await expect(page.getByText(/Question 1 of/)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId("mock-progress")).toHaveText(/^1 \/ \d+$/, { timeout: 20000 });
 
     // Options should start disabled (no tag yet)
     const optionA = page.getByRole("button", { name: /^A\./ });
@@ -107,11 +107,11 @@ test.describe("Slice 5: Mock Tests", () => {
     const { mockId, questionCount } = await res.json();
 
     await page.goto(`/mock/${mockId}`);
-    await expect(page.getByText(/Question 1 of/)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId("mock-progress")).toHaveText(/^1 \/ \d+$/, { timeout: 20000 });
 
     // Go through all questions, tag each as A and select an option
     for (let i = 0; i < questionCount; i++) {
-      await expect(page.getByText(new RegExp(`Question ${i + 1} of`))).toBeVisible({ timeout: 15000 });
+      await expect(page.getByTestId("mock-progress")).toHaveText(new RegExp(`^${i + 1} \\/ \\d+$`), { timeout: 15000 });
       await tagQuestion(page, "A");
       await page.getByRole("button", { name: /^A\./ }).click();
 
@@ -128,7 +128,8 @@ test.describe("Slice 5: Mock Tests", () => {
 
     // Should redirect to analysis page
     await page.waitForURL(`**/mock/${mockId}/analysis`, { timeout: 30000 });
-    await expect(page.getByText(/Mock Complete/i)).toBeVisible({ timeout: 15000 });
+    // D5 sprint replaced "Mock Complete" heading with a score-hero block
+    await expect(page.getByTestId("score-hero")).toBeVisible({ timeout: 15000 });
   });
 
   test("analysis page shows score and ABC breakdown", async ({ page }) => {
@@ -140,10 +141,10 @@ test.describe("Slice 5: Mock Tests", () => {
     const { mockId, questionCount } = await res.json();
 
     await page.goto(`/mock/${mockId}`);
-    await expect(page.getByText(/Question 1 of/)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId("mock-progress")).toHaveText(/^1 \/ \d+$/, { timeout: 20000 });
 
     for (let i = 0; i < questionCount; i++) {
-      await expect(page.getByText(new RegExp(`Question ${i + 1} of`))).toBeVisible({ timeout: 15000 });
+      await expect(page.getByTestId("mock-progress")).toHaveText(new RegExp(`^${i + 1} \\/ \\d+$`), { timeout: 15000 });
       await tagQuestion(page, i % 3 === 0 ? "A" : i % 3 === 1 ? "B" : "C");
       if (i % 3 === 0) {
         await page.getByRole("button", { name: /^B\./ }).click();
@@ -159,9 +160,11 @@ test.describe("Slice 5: Mock Tests", () => {
     }
 
     await page.waitForURL(`**/mock/${mockId}/analysis`, { timeout: 30000 });
-    await expect(page.getByText(/Mock Complete/i)).toBeVisible({ timeout: 15000 });
+    // D5 sprint replaced "Mock Complete" heading with a score-hero block
+    await expect(page.getByTestId("score-hero")).toBeVisible({ timeout: 15000 });
     await expect(page.getByText(/Net Score/i)).toBeVisible();
-    await expect(page.getByText(/ABC Analysis/i)).toBeVisible();
+    // D5 sprint renamed "ABC Analysis" heading to "ABC Breakdown"
+    await expect(page.getByText(/ABC Breakdown/i)).toBeVisible();
     await expect(page.getByText(/Question Review/i)).toBeVisible();
   });
 
