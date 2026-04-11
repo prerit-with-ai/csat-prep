@@ -21,7 +21,7 @@ A two-sided CSAT (UPSC Civil Services Aptitude Test) preparation platform. Stude
 - **Auth:** BetterAuth (roles: student, admin)
 - **Styling:** Tailwind CSS with CSS variables from design system
 - **Math rendering:** KaTeX via react-markdown + remark-math + rehype-katex
-- **Forms:** Raw useState/handler patterns everywhere (admin and student)
+- **Forms:** Raw `useState`/handler patterns everywhere (admin and student). No form library is installed. Do not add `react-hook-form`, Formik, or any other form library. If a form gets complex enough to need one, raise it as a proposal first — don't unilaterally install.
 - **Icons:** lucide-react
 - **File storage:** Cloudflare R2 (S3-compatible)
 - **Testing:** Playwright (E2E per slice)
@@ -103,6 +103,7 @@ tests/
 - **Mutations:** API routes (`/api/*`). Client components call via `fetch`.
 - **Sessions (practice/mock):** Client-side `useReducer`. API call on each answer submission. Session state (question index, answers, timer) lives in client memory.
 - After a mutation, call `revalidatePath()` to refresh Server Component data.
+- **Shared query helpers live in `src/lib/db-queries.ts`.** Before writing an inline `db.select()` in a Server Component or API route, check if a helper already exists. If you need a new reusable query (one that would be useful in >1 callsite), add it to `db-queries.ts` rather than inlining. One-off queries unique to a single callsite can stay inline.
 
 ### Components
 - Default is **Server Component** (no `"use client"` directive).
@@ -125,6 +126,7 @@ Every API route:
 - Use Neon serverless driver (`@neondatabase/serverless`) — HTTP-based, no TCP
 - Dev: `drizzle-kit push` for instant schema sync
 - Prod: `drizzle-kit migrate` in Railway build step
+- **Relations** are defined in `drizzle/relations.ts` and wired into `src/lib/db.ts` via `drizzle(sql, { schema: { ...schema, ...relations } })`. When adding a new table with foreign keys, add its relations to this file in the same commit. Prefer `db.query.*.findMany({ with: { ... } })` for nested fetches over manual `.leftJoin()` chains where the nested shape is cleaner.
 
 ---
 
@@ -178,7 +180,7 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 - No gamification elements (XP, badges, confetti, streaks with guilt)
 - No "Good job!" messages. Feedback is informational only.
 - Empty states: every list has a helpful empty message
-- **All buttons must use `src/components/ui/button.tsx` Button component.** Variants: `primary` (black bg, white text — CTAs), `secondary` (outline — cancel/back), `ghost` (low-emphasis), `danger` (red outline — destructive). Sizes: `sm`, `md` (default). Never write raw `<button>` elements with inline primary/secondary/danger styling — use the component. Exceptions: A/B/C/D option selectors, ABC tag pickers, timer/icon-only buttons, and other unique one-off UI with custom styling.
+- **All buttons MUST use `src/components/ui/button.tsx`.** No raw `<button>` elements. Variants: `primary` (black bg, white text — CTAs), `secondary` (outline — cancel/back), `ghost` (low-emphasis), `danger` (red outline — destructive). Sizes: `sm`, `md` (default). **If the Button component doesn't support your use case, extend its variant API — don't bypass it with inline styles.** Documented exceptions (intentionally kept as raw `<button>`): A/B/C/D option selectors, ABC tag pickers, and timer/icon-only buttons with unique one-off styling.
 
 ### Responsive
 - Mobile-first. All interactions work with thumbs.
@@ -204,7 +206,7 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 ### TypeScript
 - Strict mode enabled
 - No `any` types — use proper types or `unknown` with narrowing
-- Zod validation schemas are defined inline in each API route file (no shared schemas module)
+- Zod validation schemas are defined inline in each API route file. There is no shared schemas module. If client-side validation is added in the future (currently none), create a shared schema file *at that point* — don't create it speculatively.
 - Database types inferred from Drizzle schema (`typeof topics.$inferSelect`)
 
 ### Tailwind
@@ -231,6 +233,8 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 8. **Do not add dependencies not listed in TECHNICAL-DECISIONS.md** without explicit approval.
 9. **Do not build features not in the current slice.** Follow SPRINT-PLAN.md slice order strictly.
 10. **Do not skip the post-slice checklist.** Every slice must pass: E2E test, deployed, mobile tested, dark mode tested, empty states handled.
+11. **Do not install aspirational dependencies.** Only add a package to `package.json` if it is immediately imported in at least one file in the same commit. "Planned for later" deps that sit unused rot in place — `react-hook-form` sat unused from Slice 1 through Slice 8 before being removed. If you're not ready to use it now, don't install it now.
+12. **Do not bypass shared layers.** If you're about to inline a query, schema, or button style that a shared helper/component already handles, stop and use the shared version. If the shared version doesn't fit, extend it — don't route around it. Architectural drift is what happens when every slice takes the shortcut "just this once."
 
 ---
 
@@ -310,15 +314,41 @@ R2_PUBLIC_URL=https://pub-xxx.r2.dev
 
 ## Post-Slice Checklist
 
-Run after completing every slice:
+Run after completing every slice or non-trivial feature:
 
+### Functional checks
 ```
 □ E2E test passes
-□ Deployed to Railway and accessible
+□ Deployed to Vercel and accessible
 □ Tested on mobile (responsive)
 □ Tested in dark mode
 □ No console errors
 □ Empty states handled
 □ Auth guards work
 □ Walked through the flow as the actual user
+```
+
+### Governance checks (catch architectural drift early)
+```
+□ Does CLAUDE.md still describe what was actually built?
+  → Update any line that no longer reflects reality (tech stack, file tree, rules).
+  → Stale docs caused Slices 1–8 to drift from the original plan on schemas,
+    Button, relations, typography. Don't repeat this.
+
+□ Were any shared layers bypassed in this slice?
+  → Grep for inline queries that could use db-queries.ts helpers.
+  → Grep for raw <button> that should use the Button component.
+  → Grep for inline zod that duplicates existing route schemas.
+  → If you bypassed a shared layer intentionally, either adopt it or formally
+    retire it — don't leave stale shared code sitting around.
+
+□ Run `npx knip --no-progress` and resolve any new findings before committing.
+  → Unused files, unused exports, unused deps, unlisted deps.
+  → Some findings are false positives (eslint via `next lint`); document those
+    in .knip.json rather than ignoring them.
+
+□ Run `npx tsc --noEmit` — must be clean.
+
+□ Any new dependency? Confirm it's imported in at least one file in this
+  same commit. No aspirational installs.
 ```
