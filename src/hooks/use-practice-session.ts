@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
 
-export type PracticeQuestion = {
+type PracticeQuestion = {
   id: string;
   topicId: string;
   patternTypeId: string | null;
