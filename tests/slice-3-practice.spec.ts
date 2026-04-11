@@ -23,6 +23,17 @@ async function submitAndWaitForSolution(page: import("@playwright/test").Page) {
   await expect(page.getByText(/Correct|Incorrect/i).first()).toBeVisible({ timeout: 20000 });
 }
 
+// Helper: click Next Question and wait for the answering phase to actually
+// re-render (Confirm Answer button back in DOM) before returning. Without
+// this wait, callers sometimes assert on the next question's progress text
+// before React has flushed the state transition, causing flakiness.
+async function advanceToNextQuestion(page: import("@playwright/test").Page) {
+  await page.getByRole("button", { name: /Next Question/i }).click();
+  await expect(page.getByRole("button", { name: /Confirm Answer/i })).toBeVisible({
+    timeout: 10000,
+  });
+}
+
 test.describe("Slice 3: Student Practices", () => {
   test.use({ storageState: "tests/.auth/student.json" });
 
@@ -102,7 +113,7 @@ test.describe("Slice 3: Student Practices", () => {
       await submitAndWaitForSolution(page);
 
       if (i < total - 1) {
-        await page.getByRole("button", { name: /Next Question/i }).click();
+        await advanceToNextQuestion(page);
       } else {
         await page.getByRole("button", { name: /See Summary/i }).click();
       }
@@ -127,7 +138,7 @@ test.describe("Slice 3: Student Practices", () => {
       await submitAndWaitForSolution(page);
 
       if (i < total - 1) {
-        await page.getByRole("button", { name: /Next Question/i }).click();
+        await advanceToNextQuestion(page);
       } else {
         await page.getByRole("button", { name: /See Summary/i }).click();
       }
@@ -151,7 +162,7 @@ test.describe("Slice 3: Student Practices", () => {
       await submitAndWaitForSolution(page);
 
       if (i < total - 1) {
-        await page.getByRole("button", { name: /Next Question/i }).click();
+        await advanceToNextQuestion(page);
       } else {
         await page.getByRole("button", { name: /See Summary/i }).click();
       }
