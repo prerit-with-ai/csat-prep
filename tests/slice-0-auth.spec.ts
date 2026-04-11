@@ -52,7 +52,7 @@ test.describe("Slice 0: Auth & Foundation", () => {
     await expect(page.getByLabel("Password")).toBeVisible();
   });
 
-  test("can register as a new student and reach dashboard", async ({
+  test("can register as a new student and reach onboarding", async ({
     page,
   }) => {
     await page.goto("/register");
@@ -62,9 +62,9 @@ test.describe("Slice 0: Auth & Foundation", () => {
     await page.getByLabel("Password").fill(TEST_STUDENT.password);
     await page.getByRole("button", { name: "Create account" }).click();
 
-    // Should redirect to dashboard after successful registration
-    await page.waitForURL("**/dashboard", { timeout: 10000 });
-    await expect(page.getByText(`Welcome, ${TEST_STUDENT.name}`)).toBeVisible();
+    // New registrations are routed through the onboarding flow (commit 415a9b5)
+    await page.waitForURL("**/onboarding", { timeout: 10000 });
+    await expect(page.getByRole("heading", { name: /Meet CSAT/i })).toBeVisible();
   });
 
   test("can login as admin and reach admin dashboard", async ({ page }) => {
@@ -79,17 +79,16 @@ test.describe("Slice 0: Auth & Foundation", () => {
     await expect(page.getByText("Admin Dashboard")).toBeVisible();
   });
 
-  test("student cannot access admin routes", async ({ page }) => {
-    // Login as student first
-    await page.goto("/login");
-    await page.getByLabel("Email").fill(TEST_STUDENT.email);
-    await page.getByLabel("Password").fill(TEST_STUDENT.password);
-    await page.getByRole("button", { name: "Sign in" }).click();
-    await page.waitForURL("**/dashboard", { timeout: 10000 });
+  test("student cannot access admin routes", async ({ browser }) => {
+    // Use the seeded student session (bypasses the register->onboarding flow)
+    const context = await browser.newContext({ storageState: "tests/.auth/student.json" });
+    const page = await context.newPage();
 
     // Try to access admin page — should redirect to dashboard
     await page.goto("/admin");
     await page.waitForURL("**/dashboard", { timeout: 10000 });
     expect(page.url()).toContain("/dashboard");
+
+    await context.close();
   });
 });

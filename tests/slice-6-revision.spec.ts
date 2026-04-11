@@ -164,11 +164,15 @@ test.describe("Slice 6: Revision Queue", () => {
     await page.goto("/revision");
     await expect(page.getByText(/Revision Queue/i)).toBeVisible({ timeout: 10000 });
 
-    const hasDueItems = await page.getByRole("button", { name: /Practice Now/i }).isVisible().catch(() => false);
+    // Wait for either the queue list OR the empty state to finish loading
+    // (avoids a race where isVisible() returns false before the queue fetch resolves)
+    const practiceBtn = page.getByRole("button", { name: /Practice Now/i });
+    const emptyState = page.getByText(/No revision due today/i);
+    await expect(practiceBtn.or(emptyState)).toBeVisible({ timeout: 10000 });
 
+    const hasDueItems = await practiceBtn.isVisible();
     if (!hasDueItems) {
-      // No due items — skip the rest of this test
-      await expect(page.getByText(/No revision due today/i)).toBeVisible({ timeout: 5000 });
+      // No due items — empty state already verified above
       return;
     }
 

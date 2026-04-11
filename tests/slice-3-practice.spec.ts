@@ -28,7 +28,9 @@ test.describe("Slice 3: Student Practices", () => {
 
   test("topic page shows Start Practice button", async ({ page }) => {
     await page.goto("/topics/percentage");
-    await expect(page.getByRole("link", { name: /Start Practice/i })).toBeVisible();
+    // D4 sprint added a Start Practice CTA in the topic header band, so there
+    // are now two such links on the page (header + body). Either is fine.
+    await expect(page.getByRole("link", { name: /Start Practice/i }).first()).toBeVisible();
   });
 
   test("practice page loads with questions", async ({ page }) => {
@@ -132,7 +134,8 @@ test.describe("Slice 3: Student Practices", () => {
     }
 
     await expect(page.getByText("Practice Complete")).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText("Q1")).toBeVisible();
+    // exact: true avoids matching "Q10" etc.
+    await expect(page.getByText("Q1", { exact: true })).toBeVisible();
   });
 
   test("practice more button loads new batch", async ({ page }) => {

@@ -274,7 +274,7 @@ export default function MockTestPage() {
           <span className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>
             {state.phase === 'review_b' ? 'Review B' : 'First pass'}
           </span>
-          <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+          <span data-testid="mock-progress" className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             {state.phase === 'review_b'
               ? `${state.bQueueIndex + 1} / ${state.bQueue.length}`
               : `${state.currentIndex + 1} / ${state.questions.length}`}

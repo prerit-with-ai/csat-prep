@@ -7,8 +7,10 @@ test.describe("Slice 1: Admin Seeds Content", () => {
 
   test("admin dashboard shows Topics and Questions navigation cards", async ({ page }) => {
     await page.goto("/admin");
+    // Admin pages have both a nav link and a dashboard card for each section,
+    // so these locators intentionally match multiple elements — .first() is enough.
     await expect(page.getByRole("link", { name: /Topics/ }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /Questions/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Questions/ }).first()).toBeVisible();
   });
 
   test("admin topics page loads with New Topic button", async ({ page }) => {
@@ -129,8 +131,8 @@ test.describe("Slice 1: Admin Seeds Content", () => {
       }
     }
 
-    // Select difficulty (3rd select)
-    await page.locator("select").nth(2).selectOption("l1");
+    // Select difficulty (4th select — D1 sprint added a passage selector at index 2)
+    await page.locator("select").nth(3).selectOption("l1");
 
     // Fill question text (first textarea)
     await page.locator("textarea").first().fill("What is 50% of 200?");
