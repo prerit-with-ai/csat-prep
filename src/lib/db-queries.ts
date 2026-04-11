@@ -12,11 +12,6 @@ export async function getTopicById(id: string) {
   return result[0];
 }
 
-export async function getTopicBySlug(slug: string) {
-  const result = await db.select().from(topics).where(eq(topics.slug, slug)).limit(1);
-  return result[0];
-}
-
 // Pattern Types
 export async function getPatternTypesByTopicId(topicId: string) {
   return await db
@@ -68,16 +63,3 @@ export async function getQuestions(filters?: {
     .orderBy(desc(questions.createdAt));
 }
 
-export async function getQuestionById(id: string) {
-  const result = await db.select().from(questions).where(eq(questions.id, id)).limit(1);
-  return result[0];
-}
-
-// Formula Cards
-export async function getFormulaCardsByTopicId(topicId: string) {
-  return await db
-    .select()
-    .from(formulaCards)
-    .where(eq(formulaCards.topicId, topicId))
-    .orderBy(asc(formulaCards.displayOrder));
-}

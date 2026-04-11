@@ -9,7 +9,6 @@ import { eq, and, sql } from "drizzle-orm";
 const attemptSchema = z.object({
   questionId: z.string().uuid(),
   selectedOption: z.string().nullable(),
-  timeSpent: z.number().int().min(0),
 });
 
 export async function POST(
@@ -37,7 +36,7 @@ export async function POST(
     );
   }
 
-  const { questionId, selectedOption, timeSpent } = body;
+  const { questionId, selectedOption } = body;
 
   // Fetch revision queue entry and verify ownership
   const [queueEntry] = await db
