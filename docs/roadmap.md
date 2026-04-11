@@ -8,7 +8,9 @@ push → deploy → manual verify → merge → roadmap update → next.
 
 ## Now — Sprint in progress
 
-*(nothing in progress yet)*
+*(no sprint currently in build)*
+
+**Next action on resume:** Phase 1 Step 1.1 — write the Sprint 1 design doc at `docs/sprints/sprint-1-study-plan.md`. Scope and contents are defined in Sprint 1 under "Next" below. No code yet; just the design doc on a fresh branch (suggested: `sprint-1/design-doc`). User reviews, iterates, approves, THEN Step 1.2 (build) starts in a separate future session.
 
 ---
 
