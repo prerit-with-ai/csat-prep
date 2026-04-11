@@ -16,7 +16,7 @@ function isEditableTarget(e: KeyboardEvent): boolean {
 // Practice / Daily mode shortcuts
 // ─────────────────────────────────────────────
 
-export interface PracticeShortcutConfig {
+interface PracticeShortcutConfig {
   phase: string;
   selectedOption: string | null;
   onSelectOption: (key: string) => void;
@@ -77,7 +77,7 @@ export function usePracticeKeyboardShortcuts(config: PracticeShortcutConfig) {
 // Mock mode shortcuts
 // ─────────────────────────────────────────────
 
-export interface MockShortcutConfig {
+interface MockShortcutConfig {
   phase: string;
   currentAbcTag: "A" | "B" | "C" | null;
   onSetTag: (tag: "A" | "B" | "C") => void;

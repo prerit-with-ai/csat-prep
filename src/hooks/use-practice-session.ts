@@ -14,7 +14,7 @@ export type PracticeQuestion = {
   optionD: string;
 };
 
-export type QuestionSolution = {
+type QuestionSolution = {
   isCorrect: boolean;
   correctOption: string;
   smartSolution: string;
@@ -28,7 +28,7 @@ export type QuestionSolution = {
   topicStatus: string;
 };
 
-export type AnswerRecord = {
+type AnswerRecord = {
   questionId: string;
   selectedOption: string | null;
   isCorrect: boolean;

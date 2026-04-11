@@ -14,7 +14,7 @@ export type DailyQuestion = {
   optionD: string;
 };
 
-export type QuestionSolution = {
+type QuestionSolution = {
   isCorrect: boolean;
   correctOption: string;
   smartSolution: string;
@@ -26,7 +26,7 @@ export type QuestionSolution = {
   doseCompleted: boolean;
 };
 
-export type AnswerRecord = {
+type AnswerRecord = {
   questionId: string;
   selectedOption: string | null;
   isCorrect: boolean;

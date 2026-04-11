@@ -5,7 +5,7 @@ import { eq, and, asc, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {

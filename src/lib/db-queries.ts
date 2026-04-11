@@ -1,6 +1,6 @@
-import { eq, and, desc, asc, count, SQL } from "drizzle-orm";
+import { eq, and, desc, asc, SQL } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { topics, patternTypes, resources, questions, formulaCards } from "../../drizzle/schema";
+import { topics, patternTypes, resources, questions } from "../../drizzle/schema";
 
 // Topics
 export async function getTopics() {

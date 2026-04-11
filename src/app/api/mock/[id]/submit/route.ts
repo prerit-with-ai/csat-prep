@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { mockTests, mockTestResponses, questions } from "../../../../../../drizzle/schema";
+import { mockTests, mockTestResponses } from "../../../../../../drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 
 export async function POST(
