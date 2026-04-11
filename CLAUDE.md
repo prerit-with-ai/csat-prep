@@ -10,6 +10,7 @@ A two-sided CSAT (UPSC Civil Services Aptitude Test) preparation platform. Stude
 - `docs/DESIGN-SYSTEM.md` — Visual identity, colors, typography, component patterns
 - `docs/SPRINT-PLAN.md` — Vertical slices, build order, test strategy, post-slice checklist
 - `docs/TECHNICAL-DECISIONS.md` — Implementation-level decisions (data fetching, state, forms, storage, packages)
+- `docs/roadmap.md` — **Living backlog.** Before starting any new feature, check "Now" and "Next". When a sprint ships, move the item to "Done" with the PR number in the same commit that merges the PR. New ideas land in "Backlog" under the appropriate tier — don't silently forget them. Keep this doc current or it loses value.
 
 ---
 
@@ -177,8 +178,7 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 ### Components
 - No box shadows anywhere. Borders define containers.
 - Cards: 1px border, 12px radius, 20px vertical / 16px horizontal padding
-- No gamification elements (XP, badges, confetti, streaks with guilt)
-- No "Good job!" messages. Feedback is informational only.
+- Gamification mechanics (XP, streaks, badges, milestone confetti, etc.) are welcome — see `docs/roadmap.md` for the current gamification sprint and the per-mechanic design when being built. Keep celebratory moments tasteful: no confetti spam, no guilt-inducing streak language, no "🔥 you broke your streak!" framing.
 - Empty states: every list has a helpful empty message
 - **All buttons MUST use `src/components/ui/button.tsx`.** No raw `<button>` elements. Variants: `primary` (black bg, white text — CTAs), `secondary` (outline — cancel/back), `ghost` (low-emphasis), `danger` (red outline — destructive). Sizes: `sm`, `md` (default). **If the Button component doesn't support your use case, extend its variant API — don't bypass it with inline styles.** Documented exceptions (intentionally kept as raw `<button>`): A/B/C/D option selectors, ABC tag pickers, and timer/icon-only buttons with unique one-off styling.
 
@@ -227,7 +227,7 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 2. **Do not use Server Actions for practice/mock submissions.** These have complex client state — use API routes.
 3. **Do not install UI component libraries (shadcn, Chakra, MUI).** Build the few components needed from scratch with Tailwind. The design system is specific enough that a generic library would fight it.
 4. **Do not add loading skeletons or spinners.** Server Components render with data. If something takes >500ms, show "Loading..." text. No animated skeletons.
-5. **Do not add any gamification.** No XP, no badges, no achievements, no leaderboards, no confetti. Progress tracking is clinical: accuracy %, topics cleared, revision pending.
+5. **Do not add guilt-inducing "retention hacks".** Ban aggressive notifications, shaming streak-break messages, dark-pattern re-engagement loops, or anything that treats a student's life outside the app as an adversary. Gamification itself is fine (see Design Rules > Components and `docs/roadmap.md`); manipulation is not. Celebrate effort, never punish absence.
 6. **Do not use raw SQL strings.** Always use Drizzle's query builder. Parameterized queries only.
 7. **Do not create separate CSS files.** All styling via Tailwind classes + CSS variables in globals.css.
 8. **Do not add dependencies not listed in TECHNICAL-DECISIONS.md** without explicit approval.
@@ -351,4 +351,9 @@ Run after completing every slice or non-trivial feature:
 
 □ Any new dependency? Confirm it's imported in at least one file in this
   same commit. No aspirational installs.
+
+□ Update docs/roadmap.md — move shipped work to "Done" with the PR
+  number and commit hash; surface any new ideas from this sprint into
+  "Backlog" under the appropriate tier; re-rank "Next" based on what
+  was learned this sprint.
 ```
