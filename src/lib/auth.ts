@@ -10,5 +10,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://csat-prep.vercel.app",
+    "https://*.vercel.app",
+  ],
   plugins: [admin()],
 });
