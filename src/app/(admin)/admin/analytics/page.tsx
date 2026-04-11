@@ -1,43 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-interface TopicStat {
-  topicId: string;
-  topicName: string;
-  topicSection: "rc" | "lr" | "math";
-  studentCount: number;
-  needsHelpCount: number;
-  l1Attempts: number;
-  l1Correct: number;
-  l2Attempts: number;
-  l2Correct: number;
-  l3Attempts: number;
-  l3Correct: number;
-  greenCount: number;
-  amberCount: number;
-  redCount: number;
-}
-
-interface PatternWeakness {
-  patternId: string;
-  patternName: string;
-  topicId: string;
-  topicName: string;
-  studentCount: number;
-  totalAttempts: number;
-  totalCorrect: number;
-  accuracy: number | null;
-  persistentCount: number;
-}
-
-interface AnalyticsData {
-  topicStats: TopicStat[];
-  patternWeaknesses: PatternWeakness[];
-  overallStats: {
-    totalStudents: number;
-  };
-}
+import { getAdminAnalytics } from "@/lib/db-queries";
 
 function calculateAccuracy(
   l1Correct: number,
@@ -72,24 +36,7 @@ export default async function AdminAnalyticsPage() {
   if (!session) redirect("/login");
   if (session.user.role !== "admin") redirect("/dashboard");
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/admin/analytics`, {
-    headers: { cookie: (await headers()).get("cookie") ?? "" },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    return (
-      <div className="p-6">
-        <h1 className="text-page-title mb-2">Analytics</h1>
-        <p className="text-sm text-[var(--text-tertiary)]">
-          Error loading analytics data
-        </p>
-      </div>
-    );
-  }
-
-  const data: AnalyticsData = await res.json();
+  const data = await getAdminAnalytics();
 
   const hasTopicData = data.topicStats.length > 0;
   const hasPatternData = data.patternWeaknesses.length > 0;
