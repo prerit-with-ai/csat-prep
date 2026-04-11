@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
 
-export type DailyQuestion = {
+type DailyQuestion = {
   id: string;
   topicId: string;
   patternTypeId: string | null;
