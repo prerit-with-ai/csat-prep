@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { topics, topicProgress, patternTypes, patternProgress, user, revisionQueue } from "../../../../../drizzle/schema";
-import { eq, sql, and, inArray } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });

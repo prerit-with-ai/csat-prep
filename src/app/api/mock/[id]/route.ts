@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { mockTests, mockTestResponses, questions } from "../../../../../drizzle/schema";
-import { eq, and } from "drizzle-orm";
+import { mockTests, mockTestResponses } from "../../../../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export async function GET(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   // 1. Auth check

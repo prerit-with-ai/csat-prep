@@ -1,7 +1,7 @@
 "use client";
 import { useReducer, useRef, useCallback } from 'react';
 
-export type MockQuestion = {
+type MockQuestion = {
   id: string;
   topicId: string;
   difficulty: string;

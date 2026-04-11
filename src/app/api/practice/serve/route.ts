@@ -4,7 +4,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { questions, topics, topicProgress, attempts } from "../../../../../drizzle/schema";
-import { eq, and, desc, notInArray } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 const serveSchema = z.object({
   topicId: z.string().uuid(),

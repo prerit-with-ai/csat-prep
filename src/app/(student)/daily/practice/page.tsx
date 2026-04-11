@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { useDailySession, type DailyQuestion } from "@/hooks/use-daily-session";
+import { useDailySession } from "@/hooks/use-daily-session";
 import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
 import { openFormulaCard } from "@/components/FormulaFab";

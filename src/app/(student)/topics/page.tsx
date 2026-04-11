@@ -103,7 +103,7 @@ export default async function TopicsPage() {
                 </div>
 
                 {/* Topic rows */}
-                {sectionTopics.map((topic, idx) => {
+                {sectionTopics.map((topic) => {
                   const progress = progressMap.get(topic.id);
                   const statusColor = !progress
                     ? "var(--text-tertiary)"

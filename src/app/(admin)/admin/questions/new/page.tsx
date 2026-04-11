@@ -83,7 +83,7 @@ export default function NewQuestionPage() {
     try {
       const res = await fetch(`/api/admin/topics?topicId=${topicId}`);
       if (!res.ok) throw new Error("Failed to fetch pattern types");
-      const data = await res.json();
+      await res.json();
       // The GET /api/admin/topics doesn't return pattern types, so we'll fetch from patterns API
       const patternsRes = await fetch(`/api/admin/patterns?topicId=${topicId}`);
       if (patternsRes.ok) {

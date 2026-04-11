@@ -10,21 +10,6 @@ test.describe("Slice 6: Revision Queue", () => {
     return data.topic.id;
   }
 
-  // Helper: get a question with a pattern from a topic
-  async function getQuestionWithPattern(
-    page: import("@playwright/test").Page,
-    topicId: string
-  ): Promise<{ questionId: string; patternTypeId: string; topicId: string } | null> {
-    const res = await page.request.get("/api/practice/serve", {
-      params: { topicId },
-    });
-    if (!res.ok()) return null;
-    const data = await res.json();
-    const q = data.questions?.find((q: { patternTypeId: string }) => q.patternTypeId);
-    if (!q) return null;
-    return { questionId: q.id, patternTypeId: q.patternTypeId, topicId };
-  }
-
   test("revision page loads (authenticated)", async ({ page }) => {
     await page.goto("/revision");
     await expect(page.getByText(/Revision Queue/i)).toBeVisible({ timeout: 10000 });
