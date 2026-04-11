@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { useMockSession, type LocalResponse } from "@/hooks/use-mock-session";
 import { useMockKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
+import { Button } from "@/components/ui/button";
 
 export default function MockTestPage() {
   const { id: mockId } = useParams() as { id: string };
@@ -186,16 +187,9 @@ export default function MockTestPage() {
         <p className="text-body" style={{ color: 'var(--color-wrong)' }}>
           Error: {state.errorMessage}
         </p>
-        <button
-          onClick={handleRetry}
-          className="px-6 py-3 rounded-lg text-body"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
-        >
+        <Button variant="primary" onClick={handleRetry} className="px-6 py-3 text-body">
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -213,26 +207,12 @@ export default function MockTestPage() {
           Would you like to review them now?
         </p>
         <div className="flex gap-3 justify-center">
-          <button
-            onClick={startReviewB}
-            className="px-6 py-3 rounded-lg text-body"
-            style={{
-              backgroundColor: 'var(--text-primary)',
-              color: 'var(--bg-primary)',
-            }}
-          >
+          <Button variant="primary" onClick={startReviewB} className="px-6 py-3 text-body">
             Review B Questions ({state.bQueue.length})
-          </button>
-          <button
-            onClick={handleSkipAndSubmit}
-            className="px-6 py-3 rounded-lg text-body"
-            style={{
-              border: '1px solid var(--border-default)',
-              color: 'var(--text-primary)',
-            }}
-          >
+          </Button>
+          <Button variant="secondary" onClick={handleSkipAndSubmit} className="px-6 py-3 text-body">
             Skip & Submit
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -431,29 +411,19 @@ export default function MockTestPage() {
 
       {/* Next / Submit button */}
       {state.phase === 'first_pass' && (
-        <button
+        <Button
+          variant="primary"
           onClick={handleNext}
           disabled={!currentResponse?.abcTag}
-          className="w-full px-6 py-3 rounded-lg text-body disabled:opacity-50"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
+          className="w-full px-6 py-3 text-body"
         >
           {state.currentIndex + 1 >= state.questions.length ? 'Finish First Pass' : 'Next Question →'}
-        </button>
+        </Button>
       )}
       {state.phase === 'review_b' && (
-        <button
-          onClick={handleNextReview}
-          className="w-full px-6 py-3 rounded-lg text-body"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
-        >
+        <Button variant="primary" onClick={handleNextReview} className="w-full px-6 py-3 text-body">
           {state.bQueueIndex + 1 >= state.bQueue.length ? 'Submit Mock' : 'Next Review →'}
-        </button>
+        </Button>
       )}
 
       <KeyboardHint mode="mock" />

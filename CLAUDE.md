@@ -178,6 +178,7 @@ Read `docs/DESIGN-SYSTEM.md` for full spec. Key rules for implementation:
 - No gamification elements (XP, badges, confetti, streaks with guilt)
 - No "Good job!" messages. Feedback is informational only.
 - Empty states: every list has a helpful empty message
+- **All buttons must use `src/components/ui/button.tsx` Button component.** Variants: `primary` (black bg, white text — CTAs), `secondary` (outline — cancel/back), `ghost` (low-emphasis), `danger` (red outline — destructive). Sizes: `sm`, `md` (default). Never write raw `<button>` elements with inline primary/secondary/danger styling — use the component. Exceptions: A/B/C/D option selectors, ABC tag pickers, timer/icon-only buttons, and other unique one-off UI with custom styling.
 
 ### Responsive
 - Mobile-first. All interactions work with thumbs.

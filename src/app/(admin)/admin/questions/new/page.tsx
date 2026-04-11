@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface Topic {
   id: string;
@@ -716,17 +717,9 @@ export default function NewQuestionPage() {
         </div>
 
         <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
-            style={{
-              backgroundColor: "var(--text-primary)",
-              color: "var(--bg-primary)",
-            }}
-          >
+          <Button type="submit" variant="primary" disabled={loading} className="px-6">
             {loading ? "Creating..." : "Create Question"}
-          </button>
+          </Button>
 
           <Link
             href="/admin/questions"

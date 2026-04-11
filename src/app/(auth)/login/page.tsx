@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -108,17 +109,14 @@ export default function LoginPage() {
               </p>
             )}
 
-            <button
+            <Button
               type="submit"
+              variant="primary"
               disabled={loading}
-              className="w-full rounded-lg px-4 py-2.5 text-sm font-medium transition-opacity disabled:opacity-50 mt-2"
-              style={{
-                backgroundColor: "var(--text-primary)",
-                color: "var(--bg-primary)",
-              }}
+              className="w-full mt-2"
             >
               {loading ? "Signing in…" : "Sign in"}
-            </button>
+            </Button>
           </form>
         </div>
 

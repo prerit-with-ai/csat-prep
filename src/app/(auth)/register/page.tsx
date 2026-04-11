@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -129,17 +130,14 @@ export default function RegisterPage() {
               </p>
             )}
 
-            <button
+            <Button
               type="submit"
+              variant="primary"
               disabled={loading}
-              className="w-full rounded-lg px-4 py-2.5 text-sm font-medium transition-opacity disabled:opacity-50 mt-2"
-              style={{
-                backgroundColor: "var(--text-primary)",
-                color: "var(--bg-primary)",
-              }}
+              className="w-full mt-2"
             >
               {loading ? "Creating account…" : "Create account"}
-            </button>
+            </Button>
           </form>
         </div>
 

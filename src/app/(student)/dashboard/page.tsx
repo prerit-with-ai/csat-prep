@@ -264,7 +264,7 @@ export default async function StudentDashboard() {
                 </div>
 
                 {/* Topic rows */}
-                {sectionTopics.map((topic, idx) => {
+                {sectionTopics.map((topic) => {
                   const progress = progressMap.get(topic.id);
                   const statusColor = !progress
                     ? "var(--text-tertiary)"
@@ -280,7 +280,6 @@ export default async function StudentDashboard() {
                     : progress.status === "amber"
                     ? "In progress"
                     : "Completed";
-                  const isLast = idx === sectionTopics.length - 1;
 
                   return (
                     <Link

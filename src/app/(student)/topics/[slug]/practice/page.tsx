@@ -8,6 +8,7 @@ import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
 import { openFormulaCard } from "@/components/FormulaFab";
 import { PassageDisplay } from "@/components/PassageDisplay";
+import { Button } from "@/components/ui/button";
 
 type Topic = {
   id: string;
@@ -162,16 +163,9 @@ export default function PracticePage() {
         <p className="text-body" style={{ color: 'var(--color-wrong)' }}>
           Error: {state.errorMessage}
         </p>
-        <button
-          onClick={handleRetry}
-          className="px-6 py-3 rounded-lg text-body"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
-        >
+        <Button variant="primary" onClick={handleRetry} className="px-6 py-3 text-body">
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -240,16 +234,9 @@ export default function PracticePage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={handlePracticeMore}
-            className="flex-1 px-6 py-3 rounded-lg text-body"
-            style={{
-              backgroundColor: 'var(--text-primary)',
-              color: 'var(--bg-primary)',
-            }}
-          >
+          <Button variant="primary" onClick={handlePracticeMore} className="flex-1 px-6 py-3 text-body">
             Practice more
-          </button>
+          </Button>
           <Link
             href={`/topics/${slug}`}
             className="flex-1 px-6 py-3 rounded-lg text-body text-center"
@@ -512,32 +499,22 @@ export default function PracticePage() {
           )}
 
           {/* Next question button */}
-          <button
-            onClick={nextQuestion}
-            className="w-full px-6 py-3 rounded-lg text-body"
-            style={{
-              backgroundColor: 'var(--text-primary)',
-              color: 'var(--bg-primary)',
-            }}
-          >
+          <Button variant="primary" onClick={nextQuestion} className="w-full px-6 py-3 text-body">
             {state.currentIndex + 1 >= state.questions.length ? 'See Summary' : 'Next Question'}
-          </button>
+          </Button>
         </>
       )}
 
       {/* Confirm answer button */}
       {(isAnswering || isSubmitting) && (
-        <button
+        <Button
+          variant="primary"
           onClick={handleConfirmAnswer}
           disabled={!state.selectedOption || isSubmitting}
-          className="w-full px-6 py-3 rounded-lg text-body disabled:opacity-50"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
+          className="w-full px-6 py-3 text-body"
         >
           {isSubmitting ? 'Confirming...' : 'Confirm Answer'}
-        </button>
+        </Button>
       )}
 
       <KeyboardHint mode="practice" />

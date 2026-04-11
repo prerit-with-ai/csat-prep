@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 
 type Topic = {
   id: string;
@@ -229,17 +230,14 @@ export default function MockSelectionPage() {
       )}
 
       {/* Start button */}
-      <button
+      <Button
+        variant="primary"
         onClick={handleStartMock}
         disabled={creatingMock || (selectedMockType === 'topic' && (!selectedTopicId || loadingTopics))}
-        className="w-full px-6 py-3 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          backgroundColor: 'var(--text-primary)',
-          color: 'var(--bg-primary)',
-        }}
+        className="w-full px-6 py-3 text-sm font-semibold"
       >
         {creatingMock ? 'Starting…' : 'Start Mock →'}
-      </button>
+      </Button>
 
       {/* ABC info note */}
       <p className="mt-4 text-xs text-center" style={{ color: 'var(--text-tertiary)' }}>

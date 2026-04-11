@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   const [examDate, setExamDate] = useState("");
@@ -95,17 +96,13 @@ export default function SettingsPage() {
             />
           </div>
 
-          <button
+          <Button
+            variant="primary"
             onClick={handleSave}
             disabled={saving || !examDate}
-            className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
-            style={{
-              backgroundColor: "var(--text-primary)",
-              color: "var(--bg-primary)",
-            }}
           >
             {saving ? "Saving…" : saved ? "Saved" : "Save"}
-          </button>
+          </Button>
         </div>
 
         {examDate && (

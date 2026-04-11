@@ -332,11 +332,7 @@ export default async function TopicDetailPage({
           </div>
         )}
 
-        <ReadinessButtons
-          slug={slug}
-          initialNeedsHelp={userProgress?.needsHelp ?? false}
-          hasProgress={!!userProgress}
-        />
+        <ReadinessButtons slug={slug} />
 
         <div className="mt-4 flex flex-wrap gap-3">
           <Link

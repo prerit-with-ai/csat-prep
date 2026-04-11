@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { Button } from "@/components/ui/button";
 
 // ============================================
 // Topic Info Editor
@@ -82,13 +83,9 @@ export function TopicInfoEditor({ topic }: TopicInfoEditorProps) {
             <p className="text-sm font-mono" style={{ color: "var(--text-tertiary)" }}>{topic.slug}</p>
           </div>
         </div>
-        <button
-          onClick={() => setIsEditing(true)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
-        >
+        <Button variant="primary" onClick={() => setIsEditing(true)}>
           Edit
-        </button>
+        </Button>
       </div>
     );
   }
@@ -144,22 +141,17 @@ export function TopicInfoEditor({ topic }: TopicInfoEditorProps) {
       </div>
       {error && <p className="text-sm" style={{ color: "var(--color-wrong)" }}>{error}</p>}
       <div className="flex gap-2">
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)", opacity: isSaving ? 0.5 : 1 }}
-        >
+        <Button variant="primary" onClick={handleSave} disabled={isSaving}>
           {isSaving ? "Saving..." : "Save"}
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => { setIsEditing(false); setForm({ name: topic.name, section: topic.section, status: topic.status, displayOrder: topic.displayOrder }); setError(""); }}
           disabled={isSaving}
-          className="px-3 py-1.5 rounded-lg text-sm"
-          style={{ border: "1px solid var(--border-default)", color: "var(--text-secondary)" }}
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -224,16 +216,9 @@ export function CheatsheetEditor({ topicId, initialContent }: CheatsheetEditorPr
             No cheatsheet content yet. Click Edit to add content.
           </p>
         )}
-        <button
-          onClick={() => setIsEditing(true)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{
-            backgroundColor: "var(--text-primary)",
-            color: "var(--bg-primary)",
-          }}
-        >
+        <Button variant="primary" onClick={() => setIsEditing(true)}>
           Edit
-        </button>
+        </Button>
       </div>
     );
   }
@@ -254,29 +239,12 @@ export function CheatsheetEditor({ topicId, initialContent }: CheatsheetEditorPr
         </p>
       )}
       <div className="flex gap-2">
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{
-            backgroundColor: "var(--text-primary)",
-            color: "var(--bg-primary)",
-            opacity: isSaving ? 0.5 : 1,
-          }}
-        >
+        <Button variant="primary" onClick={handleSave} disabled={isSaving}>
           {isSaving ? "Saving..." : "Save"}
-        </button>
-        <button
-          onClick={handleCancel}
-          disabled={isSaving}
-          className="px-3 py-1.5 rounded-lg text-sm"
-          style={{
-            border: "1px solid var(--border-default)",
-            color: "var(--text-secondary)",
-          }}
-        >
+        </Button>
+        <Button variant="secondary" size="sm" onClick={handleCancel} disabled={isSaving}>
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -396,16 +364,14 @@ export function PatternManager({ topicId, initialPatterns }: PatternManagerProps
                     Order: {pattern.displayOrder}
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => handleDelete(pattern.id)}
-                  className="px-3 py-1.5 rounded-lg text-sm ml-4"
-                  style={{
-                    border: "1px solid var(--border-default)",
-                    color: "var(--status-wrong)",
-                  }}
+                  className="ml-4"
                 >
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
           ))}
@@ -457,18 +423,9 @@ export function PatternManager({ topicId, initialPatterns }: PatternManagerProps
               </p>
             )}
             <div className="flex gap-2">
-              <button
-                onClick={handleAdd}
-                disabled={isSubmitting}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
-                style={{
-                  backgroundColor: "var(--text-primary)",
-                  color: "var(--bg-primary)",
-                  opacity: isSubmitting ? 0.5 : 1,
-                }}
-              >
+              <Button variant="primary" onClick={handleAdd} disabled={isSubmitting}>
                 {isSubmitting ? "Adding..." : "Add Pattern"}
-              </button>
+              </Button>
               <button
                 onClick={() => {
                   setShowAddForm(false);
@@ -488,16 +445,9 @@ export function PatternManager({ topicId, initialPatterns }: PatternManagerProps
           </div>
         </div>
       ) : (
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{
-            backgroundColor: "var(--text-primary)",
-            color: "var(--bg-primary)",
-          }}
-        >
+        <Button variant="primary" onClick={() => setShowAddForm(true)}>
           Add Pattern Type
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -625,14 +575,9 @@ export function FormulaCardManager({ topicId, initialFormulas }: FormulaCardMana
           />
           {error && <p className="text-sm mb-3" style={{ color: "var(--color-wrong)" }}>{error}</p>}
           <div className="flex gap-2">
-            <button
-              onClick={handleAdd}
-              disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg text-sm font-medium"
-              style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)", opacity: isSubmitting ? 0.5 : 1 }}
-            >
+            <Button variant="primary" onClick={handleAdd} disabled={isSubmitting}>
               {isSubmitting ? "Adding..." : "Add Card"}
-            </button>
+            </Button>
             <button
               onClick={() => { setShowAddForm(false); setNewContent(""); setError(""); }}
               disabled={isSubmitting}
@@ -644,13 +589,9 @@ export function FormulaCardManager({ topicId, initialFormulas }: FormulaCardMana
           </div>
         </div>
       ) : (
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
-        >
+        <Button variant="primary" onClick={() => setShowAddForm(true)}>
           Add Formula Card
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -905,18 +846,9 @@ export function ResourceManager({ topicId, initialResources }: ResourceManagerPr
               </p>
             )}
             <div className="flex gap-2">
-              <button
-                onClick={handleAdd}
-                disabled={isSubmitting}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
-                style={{
-                  backgroundColor: "var(--text-primary)",
-                  color: "var(--bg-primary)",
-                  opacity: isSubmitting ? 0.5 : 1,
-                }}
-              >
+              <Button variant="primary" onClick={handleAdd} disabled={isSubmitting}>
                 {isSubmitting ? "Adding..." : "Add Resource"}
-              </button>
+              </Button>
               <button
                 onClick={() => {
                   setShowAddForm(false);
@@ -936,16 +868,9 @@ export function ResourceManager({ topicId, initialResources }: ResourceManagerPr
           </div>
         </div>
       ) : (
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{
-            backgroundColor: "var(--text-primary)",
-            color: "var(--bg-primary)",
-          }}
-        >
+        <Button variant="primary" onClick={() => setShowAddForm(true)}>
           Add Resource
-        </button>
+        </Button>
       )}
     </div>
   );

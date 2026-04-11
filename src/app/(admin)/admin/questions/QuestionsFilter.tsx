@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface Topic {
   id: string;
@@ -87,26 +88,12 @@ export default function QuestionsFilter({ topics }: QuestionsFilterProps) {
         </div>
 
         <div className="flex gap-2">
-          <button
-            onClick={handleFilter}
-            className="px-4 py-2 rounded-lg text-sm font-medium"
-            style={{
-              backgroundColor: "var(--text-primary)",
-              color: "var(--bg-primary)",
-            }}
-          >
+          <Button variant="primary" onClick={handleFilter}>
             Filter
-          </button>
-          <button
-            onClick={handleClear}
-            className="px-4 py-2 rounded-lg text-sm font-medium border"
-            style={{
-              borderColor: "var(--border-default)",
-              color: "var(--text-secondary)",
-            }}
-          >
+          </Button>
+          <Button variant="secondary" onClick={handleClear}>
             Clear
-          </button>
+          </Button>
         </div>
       </div>
     </div>

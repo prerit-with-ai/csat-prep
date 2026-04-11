@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 type Topic = { id: string; name: string; section: string };
 type Passage = {
@@ -81,13 +82,9 @@ export default function PassagesPage() {
         <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
           RC Passages
         </h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-lg text-sm font-medium"
-          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
-        >
+        <Button variant="primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? "Cancel" : "+ New Passage"}
-        </button>
+        </Button>
       </div>
 
       {/* Create form */}
@@ -189,14 +186,9 @@ export default function PassagesPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
-            style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
-          >
+          <Button type="submit" variant="primary" disabled={saving}>
             {saving ? "Saving…" : "Create Passage"}
-          </button>
+          </Button>
         </form>
       )}
 
