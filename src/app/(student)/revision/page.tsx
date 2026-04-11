@@ -1,6 +1,7 @@
 'use client';
 
 import { useReducer, useEffect, useRef, useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 // ==================== Types ====================
 
@@ -339,21 +340,13 @@ export default function RevisionPage() {
                   <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
                     Review {item.reviewCount + 1} of 3
                   </span>
-                  <button
+                  <Button
+                    variant="primary"
+                    size="sm"
                     onClick={() => dispatch({ type: 'START_PRACTICE', item })}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: 'var(--text-primary)',
-                      color: 'var(--bg-primary)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
                   >
                     Practice Now
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -366,21 +359,14 @@ export default function RevisionPage() {
   if (state.phase === 'practicing' && state.currentItem) {
     return (
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '24px 16px' }}>
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => dispatch({ type: 'CANCEL_PRACTICE' })}
-          style={{
-            marginBottom: '24px',
-            padding: '8px 12px',
-            backgroundColor: 'transparent',
-            color: 'var(--text-secondary)',
-            border: '1px solid var(--border-default)',
-            borderRadius: '8px',
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
+          className="mb-6"
         >
           ← Back to List
-        </button>
+        </Button>
 
         <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
           {state.currentItem.patternTypeName}
@@ -453,22 +439,14 @@ export default function RevisionPage() {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <span style={{ fontSize: '13px', color: 'var(--text-tertiary)' }}>Time: {timeSpent}s</span>
-          <button
+          <Button
+            variant="primary"
             onClick={handleSubmit}
             disabled={!state.selectedOption}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: state.selectedOption ? 'var(--text-primary)' : 'var(--bg-secondary)',
-              color: state.selectedOption ? 'var(--bg-primary)' : 'var(--text-tertiary)',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '15px',
-              fontWeight: 600,
-              cursor: state.selectedOption ? 'pointer' : 'not-allowed',
-            }}
+            style={{ padding: '12px 24px', fontSize: '15px' }}
           >
             Submit Answer
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -622,22 +600,14 @@ export default function RevisionPage() {
           </div>
         )}
 
-        <button
+        <Button
+          variant="primary"
           onClick={() => dispatch({ type: 'DONE_REVIEWING' })}
-          style={{
-            width: '100%',
-            padding: '12px 24px',
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '15px',
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
+          className="w-full"
+          style={{ padding: '12px 24px', fontSize: '15px' }}
         >
           Done
-        </button>
+        </Button>
       </div>
     );
   }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface Topic {
   id: string;
@@ -785,17 +786,9 @@ export default function EditQuestionPage() {
 
         <div className="flex justify-between items-center">
           <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-6 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
-              style={{
-                backgroundColor: "var(--text-primary)",
-                color: "var(--bg-primary)",
-              }}
-            >
+            <Button type="submit" variant="primary" disabled={saving} className="px-6">
               {saving ? "Saving..." : "Save Changes"}
-            </button>
+            </Button>
 
             <Link
               href="/admin/questions"
@@ -809,17 +802,14 @@ export default function EditQuestionPage() {
             </Link>
           </div>
 
-          <button
+          <Button
             type="button"
+            variant="danger"
             onClick={() => setShowDeleteConfirm(true)}
-            className="px-6 py-2 rounded-lg text-sm font-medium border"
-            style={{
-              borderColor: "var(--status-wrong)",
-              color: "var(--status-wrong)",
-            }}
+            className="px-6"
           >
             Archive Question
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -847,26 +837,12 @@ export default function EditQuestionPage() {
               practice sessions but will remain in the database.
             </p>
             <div className="flex gap-4 justify-end">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium border"
-                style={{
-                  borderColor: "var(--border-default)",
-                  color: "var(--text-secondary)",
-                }}
-              >
+              <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
                 Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
-                style={{
-                  backgroundColor: "var(--status-wrong)",
-                  color: "var(--bg-primary)",
-                }}
-              >
+              </Button>
+              <Button variant="danger" onClick={handleDelete}>
                 Archive
-              </button>
+              </Button>
             </div>
           </div>
         </div>

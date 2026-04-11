@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 const MASTERY_THRESHOLD = 3; // consecutive correct answers
 
@@ -241,21 +242,21 @@ export function DrillSession({ topic, patterns }: Props) {
         </p>
         <div className="flex flex-col gap-3">
           {patterns.length > 1 && (
-            <button
+            <Button
+              variant="primary"
               onClick={() => setPhase("pick-pattern")}
-              className="w-full px-6 py-3 rounded-lg text-sm font-medium"
-              style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
+              className="w-full px-6 py-3"
             >
               Drill another pattern
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="secondary"
             onClick={() => { setStats({ attempted: 0, correct: 0, streak: 0 }); setSeenIds([]); selectedPattern && loadQuestion(selectedPattern.id, []); }}
-            className="w-full px-6 py-3 rounded-lg text-sm"
-            style={{ border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
+            className="w-full px-6 py-3"
           >
             Drill this pattern again
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -269,13 +270,13 @@ export function DrillSession({ topic, patterns }: Props) {
         <p className="text-sm mb-8" style={{ color: "var(--text-tertiary)" }}>
           You've seen all available questions for this pattern.
         </p>
-        <button
+        <Button
+          variant="primary"
           onClick={() => setPhase("pick-pattern")}
-          className="w-full px-6 py-3 rounded-lg text-sm font-medium"
-          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
+          className="w-full px-6 py-3"
         >
           Pick another pattern
-        </button>
+        </Button>
       </div>
     );
   }
@@ -411,26 +412,22 @@ export function DrillSession({ topic, patterns }: Props) {
             </>
           )}
 
-          <button
-            onClick={nextQuestion}
-            className="w-full px-6 py-3 rounded-lg text-body"
-            style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
-          >
+          <Button variant="primary" onClick={nextQuestion} className="w-full px-6 py-3 text-body">
             Next Question
-          </button>
+          </Button>
         </>
       )}
 
       {/* Confirm button */}
       {(isAnswering || phase === "submitting") && (
-        <button
+        <Button
+          variant="primary"
           onClick={submitAnswer}
           disabled={!selectedOption || phase === "submitting"}
-          className="w-full px-6 py-3 rounded-lg text-body disabled:opacity-50"
-          style={{ backgroundColor: "var(--text-primary)", color: "var(--bg-primary)" }}
+          className="w-full px-6 py-3 text-body"
         >
           {phase === "submitting" ? "Confirming…" : "Confirm Answer"}
-        </button>
+        </Button>
       )}
     </div>
   );

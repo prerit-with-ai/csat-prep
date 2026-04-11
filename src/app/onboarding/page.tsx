@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 /* ─── Screen visuals ─────────────────────────────────────────────────────── */
 
@@ -584,23 +585,14 @@ export default function OnboardingPage() {
 
         {/* CTA */}
         <div style={{ paddingTop: 20, paddingBottom: 12 }}>
-          <button
+          <Button
+            variant="primary"
             onClick={advance}
-            style={{
-              width: "100%",
-              padding: "14px 24px",
-              borderRadius: 14,
-              fontSize: 15,
-              fontWeight: 700,
-              backgroundColor: "var(--text-primary)",
-              color: "var(--bg-primary)",
-              border: "none",
-              cursor: "pointer",
-              letterSpacing: "0.01em",
-            }}
+            className="w-full"
+            style={{ padding: "14px 24px", borderRadius: 14, fontSize: 15, fontWeight: 700, letterSpacing: "0.01em" }}
           >
             {isLast ? "Take me to Topics →" : "Next →"}
-          </button>
+          </Button>
         </div>
 
         {/* Dot indicators */}

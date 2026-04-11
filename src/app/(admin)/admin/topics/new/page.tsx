@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function NewTopicPage() {
   const [name, setName] = useState("");
@@ -287,20 +288,9 @@ export default function NewTopicPage() {
 
             {/* Submit Button */}
             <div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
-                style={{
-                  backgroundColor: isSubmitting
-                    ? "var(--text-tertiary)"
-                    : "var(--text-primary)",
-                  color: "var(--bg-primary)",
-                  cursor: isSubmitting ? "not-allowed" : "pointer",
-                }}
-              >
+              <Button type="submit" variant="primary" disabled={isSubmitting}>
                 {isSubmitting ? "Creating..." : "Create Topic"}
-              </button>
+              </Button>
             </div>
           </div>
         </form>

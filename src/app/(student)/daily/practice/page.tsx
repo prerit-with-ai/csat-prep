@@ -7,6 +7,7 @@ import { usePracticeKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { KeyboardHint } from "@/components/KeyboardHint";
 import { openFormulaCard } from "@/components/FormulaFab";
 import { PassageDisplay } from "@/components/PassageDisplay";
+import { Button } from "@/components/ui/button";
 
 export default function DailyPracticePage() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -107,16 +108,9 @@ export default function DailyPracticePage() {
         <p className="text-body" style={{ color: 'var(--color-wrong)' }}>
           Error: {state.errorMessage}
         </p>
-        <button
-          onClick={handleRetry}
-          className="px-6 py-3 rounded-lg text-body"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
-        >
+        <Button variant="primary" onClick={handleRetry} className="px-6 py-3 text-body">
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -427,32 +421,22 @@ export default function DailyPracticePage() {
           )}
 
           {/* Next question button */}
-          <button
-            onClick={nextQuestion}
-            className="w-full px-6 py-3 rounded-lg text-body"
-            style={{
-              backgroundColor: 'var(--text-primary)',
-              color: 'var(--bg-primary)',
-            }}
-          >
+          <Button variant="primary" onClick={nextQuestion} className="w-full px-6 py-3 text-body">
             {isLastUnanswered() ? 'See Summary' : 'Next Question'}
-          </button>
+          </Button>
         </>
       )}
 
       {/* Confirm answer button */}
       {(isAnswering || isSubmitting) && (
-        <button
+        <Button
+          variant="primary"
           onClick={handleConfirmAnswer}
           disabled={!state.selectedOption || isSubmitting}
-          className="w-full px-6 py-3 rounded-lg text-body disabled:opacity-50"
-          style={{
-            backgroundColor: 'var(--text-primary)',
-            color: 'var(--bg-primary)',
-          }}
+          className="w-full px-6 py-3 text-body"
         >
           {isSubmitting ? 'Confirming...' : 'Confirm Answer'}
-        </button>
+        </Button>
       )}
 
       <KeyboardHint mode="practice" />

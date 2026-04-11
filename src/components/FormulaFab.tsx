@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { Button } from "@/components/ui/button";
 
 type FormulaCard = {
   id: string;
@@ -117,19 +118,15 @@ export default function FormulaFab() {
   return (
     <>
       {/* Floating Action Button */}
-      <button
+      <Button
+        variant="secondary"
         onClick={() => { setIsOpen(true); setHighlightTopicId(null); }}
-        className="fixed bottom-6 right-6 z-50 px-4 py-3 font-semibold text-sm transition-opacity hover:opacity-80"
-        style={{
-          backgroundColor: "var(--bg-primary)",
-          color: "var(--text-primary)",
-          border: "1px solid var(--border-default)",
-          borderRadius: "12px",
-        }}
+        className="fixed bottom-6 right-6 z-50"
+        style={{ backgroundColor: "var(--bg-primary)" }}
         aria-label="Open formula cards"
       >
         ∑ Formulas
-      </button>
+      </Button>
 
       {/* Overlay */}
       {isOpen && (

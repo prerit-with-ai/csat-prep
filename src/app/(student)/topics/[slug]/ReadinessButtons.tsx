@@ -1,21 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ReadinessButtonsProps {
   slug: string;
-  initialNeedsHelp: boolean;
-  hasProgress: boolean;
 }
 
-export function ReadinessButtons({
-  slug,
-  initialNeedsHelp,
-  hasProgress,
-}: ReadinessButtonsProps) {
+export function ReadinessButtons({ slug }: ReadinessButtonsProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [needsHelp, setNeedsHelp] = useState(initialNeedsHelp);
 
   const handleReady = async () => {
     setIsLoading(true);
@@ -34,8 +28,6 @@ export function ReadinessButtons({
         throw new Error("Failed to update progress");
       }
 
-      // Navigate to practice page (will be built in Slice 3)
-      // For now, redirect to dashboard
       window.location.href = "/dashboard";
     } catch (error) {
       console.error("Error updating progress:", error);
@@ -61,7 +53,6 @@ export function ReadinessButtons({
         throw new Error("Failed to update progress");
       }
 
-      setNeedsHelp(true);
       setMessage("Noted — keep reviewing!");
       setIsLoading(false);
     } catch (error) {
@@ -74,30 +65,12 @@ export function ReadinessButtons({
   return (
     <div>
       <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          onClick={handleReady}
-          disabled={isLoading}
-          style={{
-            backgroundColor: "var(--text-primary)",
-            color: "var(--bg-primary)",
-            border: "1px solid var(--text-primary)",
-          }}
-          className="px-4 py-2 rounded-lg font-medium text-body hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+        <Button variant="primary" onClick={handleReady} disabled={isLoading}>
           {isLoading ? "Loading..." : "Ready to practice"}
-        </button>
-        <button
-          onClick={handleNotReady}
-          disabled={isLoading}
-          style={{
-            backgroundColor: "var(--bg-primary)",
-            color: "var(--text-primary)",
-            border: "1px solid var(--border-default)",
-          }}
-          className="px-4 py-2 rounded-lg font-medium text-body hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+        </Button>
+        <Button variant="secondary" onClick={handleNotReady} disabled={isLoading}>
           {isLoading ? "Loading..." : "Not ready yet"}
-        </button>
+        </Button>
       </div>
 
       {message && (

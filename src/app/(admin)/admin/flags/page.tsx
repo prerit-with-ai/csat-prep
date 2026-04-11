@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 type NeedsHelpFlag = {
   id: string;
@@ -232,24 +233,14 @@ export default function AdminFlagsPage() {
                         alignItems: "center",
                       }}
                     >
-                      <button
+                      <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={() => handleResolve(flag.id)}
                         disabled={resolving[flag.id]}
-                        style={{
-                          padding: "6px 12px",
-                          fontSize: 13,
-                          border: "1px solid var(--border-default)",
-                          borderRadius: 8,
-                          backgroundColor: "var(--bg-primary)",
-                          color: "var(--text-primary)",
-                          cursor: resolving[flag.id]
-                            ? "not-allowed"
-                            : "pointer",
-                          opacity: resolving[flag.id] ? 0.5 : 1,
-                        }}
                       >
                         {resolving[flag.id] ? "Resolving..." : "Resolve"}
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -396,35 +387,18 @@ export default function AdminFlagsPage() {
                       }}
                       placeholder="Add notes about this student's progress or intervention needed..."
                     />
-                    <button
+                    <Button
+                      variant="primary"
+                      size="sm"
                       onClick={() => handleSaveNotes(flag.id)}
                       disabled={
                         savingNotes[flag.id] ||
                         editingNotes[flag.id] === flag.adminNotes
                       }
-                      style={{
-                        marginTop: 8,
-                        padding: "8px 16px",
-                        fontSize: 13,
-                        fontWeight: 600,
-                        backgroundColor: "var(--text-primary)",
-                        color: "var(--bg-primary)",
-                        border: "none",
-                        borderRadius: 8,
-                        cursor:
-                          savingNotes[flag.id] ||
-                          editingNotes[flag.id] === flag.adminNotes
-                            ? "not-allowed"
-                            : "pointer",
-                        opacity:
-                          savingNotes[flag.id] ||
-                          editingNotes[flag.id] === flag.adminNotes
-                            ? 0.5
-                            : 1,
-                      }}
+                      className="mt-2"
                     >
                       {savingNotes[flag.id] ? "Saving..." : "Save Notes"}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               );
